@@ -2,7 +2,6 @@ import React from 'react';
 import { Modal, Text, TouchableOpacity, View } from 'react-native';
 import type { TableItem } from '../types';
 import styles from '../styles';
-import SwipeDownHandle from './SwipeDownHandle';
 
 interface VenueItemEditorProps {
   item: TableItem | null;
@@ -21,7 +20,6 @@ export default function VenueItemEditor({ item, onClose, onUpdate, onDelete }: V
     >
       <View style={styles.modalOverlay}>
         <View style={styles.venueEditor}>
-          <SwipeDownHandle onDismiss={onClose} />
           <View style={styles.modalHeader}>
             <View>
               <Text style={styles.modalTitle}>{item?.name}</Text>

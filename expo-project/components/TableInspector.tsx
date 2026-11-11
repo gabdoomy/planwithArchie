@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import type { Guest, TableItem } from '../types';
 import styles from '../styles';
-import SwipeDownHandle from './SwipeDownHandle';
 
 interface TableInspectorProps {
   table: TableItem | null;
@@ -60,7 +59,6 @@ export default function TableInspector({
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={styles.modalContent}>
-          <SwipeDownHandle onDismiss={onClose} />
           <View style={styles.modalHeader}>
             <View>
               <Text style={styles.modalTitle}>{table?.name}</Text>

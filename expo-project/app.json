@@ -1,5 +1,8 @@
 {
   "ios": {
     "bundleIdentifier": "com.alex.g.dumitrescu.planwitharchie"
-  }
+  },
+  "plugins": [
+    "expo-font"
+  ]
 }
