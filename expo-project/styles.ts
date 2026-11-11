@@ -245,13 +245,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#fef2f2'
   },
+  sheetHandleArea: {
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: -12,
+    marginBottom: 4
+  },
   sheetHandle: {
     width: 40,
     height: 5,
     backgroundColor: '#cbd5e1',
     borderRadius: 3,
-    alignSelf: 'center',
-    marginBottom: 12
+    alignSelf: 'center'
   },
   modalHeader: {
     flexDirection: 'row',
