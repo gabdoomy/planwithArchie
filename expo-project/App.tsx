@@ -1,5 +1,5 @@
 /**
- * AislePlan - iOS Wedding Seating Chart
+ * PlanWithArchie - iOS Wedding Seating Chart
  * Expo SDK ~58.0.22 Mobile Application
  */
 
@@ -16,7 +16,7 @@ import styles from './styles';
 import { exportVenuePDF } from './services/exportVenuePDF';
 import { venueItemLabels } from './venueItems';
 
-const STORAGE_KEY = '@aisleplan_wedding_seating_v1';
+const STORAGE_KEY = '@planwitharchie_wedding_seating_v1';
 export default function App() {
   const [tables, setTables] = useState<TableItem[]>([
     {

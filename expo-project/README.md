@@ -1,4 +1,4 @@
-# AislePlan - iOS Wedding Seating Chart (Expo SDK ~58.0.22)
+# PlanWithArchie - iOS Wedding Seating Chart (Expo SDK ~58.0.22)
 
 Minimalist, touch-first iOS mobile application for creating wedding seating floor plans, seating guests at round, square, and rectangular tables, saving layout state to local storage (`AsyncStorage`) as JSON, and generating official venue layout PDFs using `expo-print` & `expo-sharing`.
 

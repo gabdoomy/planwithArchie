@@ -169,7 +169,7 @@ export async function exportVenuePDF(tables: TableItem[]) {
         <body>
           <div class="header">
             <h1>WEDDING SEATING CHART & VENUE SPECIFICATION</h1>
-            <div class="subtitle">Official Venue Manifest & Floor Plan Allocation · Generated via AislePlan iOS (Expo SDK 58)</div>
+            <div class="subtitle">Official Venue Manifest & Floor Plan Allocation · Generated via PlanWithArchie</div>
           </div>
 
           <div class="metrics">
@@ -222,7 +222,7 @@ export async function exportVenuePDF(tables: TableItem[]) {
           </section>
 
           <div class="footer">
-            AislePlan iOS Seating System · For Wedding Planner, Venue Captain & Kitchen Staff
+            PlanWithArchie Seating System · For Wedding Planner, Venue Captain & Kitchen Staff
           </div>
         </body>
         </html>
