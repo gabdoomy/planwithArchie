@@ -14,6 +14,8 @@ import {
   Alert,
   Modal,
   TextInput,
+  KeyboardAvoidingView,
+  Platform,
   PanResponder,
   Animated,
   Dimensions,
@@ -37,6 +39,10 @@ export interface TableItem {
   name: string;
   shape: TableShape;
   capacity: number;
+  scale?: number;
+  lengthScale?: number;
+  widthScale?: number;
+  rotation?: number;
   x: number;
   y: number;
   guests: Guest[];
@@ -104,6 +110,8 @@ export default function App() {
   const [selectedTable, setSelectedTable] = useState<TableItem | null>(null);
   const [newGuestName, setNewGuestName] = useState('');
   const [newGuestDiet, setNewGuestDiet] = useState('');
+  const [newGuestIsVip, setNewGuestIsVip] = useState(false);
+  const [editingGuestId, setEditingGuestId] = useState<string | null>(null);
 
   // Load from Local Storage on mount
   useEffect(() => {
@@ -138,6 +146,113 @@ export default function App() {
     try {
       const totalGuests = tables.reduce((acc, t) => acc + t.guests.length, 0);
       const totalCapacity = tables.reduce((acc, t) => acc + t.capacity, 0);
+      const escapeHtml = (value: string) => value.replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[char] ?? char);
+      const tableBounds = tables.map(table => {
+        const scale = table.scale ?? 1;
+        const width = (table.shape === 'round' ? 100 : table.shape === 'rectangle' ? 136 : 92) *
+          scale * (table.shape === 'rectangle' ? table.lengthScale ?? 1 : 1);
+        const height = (table.shape === 'round' ? 100 : table.shape === 'rectangle' ? 80 : 92) *
+          scale * (table.shape === 'rectangle' ? table.widthScale ?? 1 : 1);
+        const rotation = (table.rotation ?? 0) * Math.PI / 180;
+        const extentX = Math.abs(Math.cos(rotation)) * (width / 2 + 27) +
+          Math.abs(Math.sin(rotation)) * (height / 2 + 27);
+        const extentY = Math.abs(Math.sin(rotation)) * (width / 2 + 27) +
+          Math.abs(Math.cos(rotation)) * (height / 2 + 27);
+        return {
+          table,
+          width,
+          height,
+          minX: table.x + width / 2 - extentX,
+          maxX: table.x + width / 2 + extentX,
+          minY: table.y + height / 2 - extentY,
+          maxY: table.y + height / 2 + extentY
+        };
+      });
+      const planMinX = Math.min(0, ...tableBounds.map(bounds => bounds.minX));
+      const planMinY = Math.min(0, ...tableBounds.map(bounds => bounds.minY));
+      const planMaxX = Math.max(SCREEN_WIDTH, ...tableBounds.map(bounds => bounds.maxX));
+      const planMaxY = Math.max(SCREEN_HEIGHT - 200, ...tableBounds.map(bounds => bounds.maxY));
+      const planPadding = 24;
+      const planViewBox = `${planMinX - planPadding} ${planMinY - planPadding} ${planMaxX - planMinX + planPadding * 2} ${planMaxY - planMinY + planPadding * 2}`;
+      const floorPlanSvg = tableBounds.map(({ table, width, height }) => {
+        const seats: { x: number; y: number; guest?: Guest; seatNum: number }[] = [];
+        const chairSize = 24;
+        if (table.shape === 'round') {
+          const radius = width / 2;
+          const chairDistance = radius + 15;
+          for (let i = 0; i < table.capacity; i++) {
+            const angle = (i * 2 * Math.PI) / table.capacity - Math.PI / 2;
+            seats.push({
+              x: radius + Math.cos(angle) * chairDistance - chairSize / 2,
+              y: radius + Math.sin(angle) * chairDistance - chairSize / 2,
+              seatNum: i + 1,
+              guest: table.guests[i]
+            });
+          }
+        } else if (table.shape === 'rectangle') {
+          const topSeats = Math.ceil(table.capacity / 2);
+          const bottomSeats = Math.floor(table.capacity / 2);
+          for (let i = 0; i < topSeats; i++) {
+            seats.push({
+              x: 20 + ((width - 40) * (i + 0.5)) / topSeats - chairSize / 2,
+              y: -chairSize / 2 - 3,
+              seatNum: i + 1,
+              guest: table.guests[i]
+            });
+          }
+          for (let i = 0; i < bottomSeats; i++) {
+            seats.push({
+              x: 20 + ((width - 40) * (i + 0.5)) / bottomSeats - chairSize / 2,
+              y: height - chairSize / 2 + 3,
+              seatNum: topSeats + i + 1,
+              guest: table.guests[topSeats + i]
+            });
+          }
+        } else {
+          const perimeter = 2 * (width + height);
+          for (let i = 0; i < table.capacity; i++) {
+            const position = ((i + 0.5) * perimeter) / table.capacity;
+            let x: number;
+            let y: number;
+            if (position < width) {
+              x = position - chairSize / 2;
+              y = -chairSize - 3;
+            } else if (position < width + height) {
+              x = width + 3;
+              y = position - width - chairSize / 2;
+            } else if (position < 2 * width + height) {
+              x = width - (position - width - height) - chairSize / 2;
+              y = height + 3;
+            } else {
+              x = -chairSize - 3;
+              y = height - (position - 2 * width - height) - chairSize / 2;
+            }
+            seats.push({ x, y, seatNum: i + 1, guest: table.guests[i] });
+          }
+        }
+
+        const chairs = seats.map(seat => {
+          const guest = seat.guest;
+          const fill = guest ? guest.isVip ? '#fef3c7' : '#0f172a' : '#ffffff';
+          const stroke = guest?.isVip ? '#d97706' : guest ? '#0f172a' : '#cbd5e1';
+          const text = guest ? guest.name.trim().split(/\s+/).filter(Boolean)
+            .map(part => part[0]).slice(0, 2).join('').toUpperCase() : String(seat.seatNum);
+          return `<g><rect x="${seat.x}" y="${seat.y}" width="${chairSize}" height="${chairSize}" rx="${chairSize / 2}" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/><text x="${seat.x + chairSize / 2}" y="${seat.y + chairSize / 2 + 3}" text-anchor="middle" font-size="7" font-weight="700" fill="${guest?.isVip ? '#92400e' : guest ? '#ffffff' : '#64748b'}">${escapeHtml(text)}</text></g>`;
+        }).join('');
+        const surface = table.shape === 'round'
+          ? `<circle cx="${width / 2}" cy="${height / 2}" r="${width / 2}" />`
+          : `<rect x="0" y="0" width="${width}" height="${height}" rx="10" />`;
+        return `<g transform="translate(${table.x + width / 2} ${table.y + height / 2}) rotate(${table.rotation ?? 0}) translate(${-width / 2} ${-height / 2})">
+          ${chairs}
+          <g class="table-surface">${surface}<text class="table-name" x="${width / 2}" y="${height / 2 - 3}" text-anchor="middle">${escapeHtml(table.name)}</text><text class="table-count" x="${width / 2}" y="${height / 2 + 12}" text-anchor="middle">${table.guests.length} / ${table.capacity} seats</text></g>
+        </g>`;
+      }).join('');
 
       const htmlContent = `
         <!DOCTYPE html>
@@ -162,6 +277,15 @@ export default function App() {
             .vip-tag { font-size: 9px; font-weight: bold; background: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 4px; margin-left: 6px; }
             .diet-tag { font-size: 10px; font-weight: bold; color: #dc2626; }
             .footer { margin-top: 40px; font-size: 11px; color: #94a3b8; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 16px; }
+            .floor-plan { page-break-before: always; break-before: page; page-break-inside: avoid; }
+            .floor-plan h2 { font-size: 20px; margin: 0 0 6px; }
+            .floor-plan-note { color: #64748b; font-size: 11px; margin-bottom: 12px; }
+            .floor-plan svg { display: block; width: 100%; height: 6.4in; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; }
+            .table-surface rect, .table-surface circle { fill: #ffffff; stroke: #0f172a; stroke-width: 2; }
+            .table-name { fill: #0f172a; font-size: 12px; font-weight: 700; }
+            .table-count { fill: #64748b; font-size: 9px; font-weight: 600; }
+            .plan-legend { display: flex; gap: 18px; font-size: 10px; color: #475569; margin-top: 10px; }
+            .legend-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
           </style>
         </head>
         <body>
@@ -189,22 +313,35 @@ export default function App() {
             ${tables.map((t, idx) => `
               <div class="table-card">
                 <div class="table-header">
-                  <span class="table-name">Table ${idx + 1}: ${t.name}</span>
+                  <span class="table-name">Table ${idx + 1}: ${escapeHtml(t.name)}</span>
                   <span class="table-shape">${t.shape} · ${t.guests.length}/${t.capacity}</span>
                 </div>
                 ${t.guests.length === 0 ? '<div style="font-size: 12px; color: #94a3b8; font-style: italic;">No guests seated yet</div>' : ''}
                 ${t.guests.map((g, sIdx) => `
                   <div class="guest-row">
                     <span>
-                      <strong>Seat ${sIdx + 1}:</strong> ${g.name}
+                      <strong>Seat ${sIdx + 1}:</strong> ${escapeHtml(g.name)}
                       ${g.isVip ? '<span class="vip-tag">VIP</span>' : ''}
                     </span>
-                    ${g.dietary ? `<span class="diet-tag">${g.dietary}</span>` : ''}
+                    ${g.dietary ? `<span class="diet-tag">${escapeHtml(g.dietary)}</span>` : ''}
                   </div>
                 `).join('')}
               </div>
             `).join('')}
           </div>
+
+          <section class="floor-plan">
+            <h2>Seating Plan</h2>
+            <div class="floor-plan-note">Floor-plan view showing table layout, orientation, seats and assigned guests.</div>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="${planViewBox}" preserveAspectRatio="xMidYMid meet">
+              ${floorPlanSvg}
+            </svg>
+            <div class="plan-legend">
+              <span><span class="legend-dot" style="background:#fff;border:1px solid #cbd5e1"></span>Open seat</span>
+              <span><span class="legend-dot" style="background:#0f172a"></span>Guest</span>
+              <span><span class="legend-dot" style="background:#fef3c7;border:1px solid #d97706"></span>VIP</span>
+            </div>
+          </section>
 
           <div class="footer">
             AislePlan iOS Seating System · For Wedding Planner, Venue Captain & Kitchen Staff
@@ -233,11 +370,14 @@ export default function App() {
       name: `Table ${count}`,
       shape,
       capacity: defaultCapacity,
+      scale: 1,
+      rotation: 0,
       x: 60 + (count % 3) * 60,
       y: 120 + (count % 4) * 80,
       guests: []
     };
     setTables([...tables, newTable]);
+    resetGuestForm();
     setSelectedTable(newTable);
   };
 
@@ -245,21 +385,61 @@ export default function App() {
     setTables(prev => prev.map(t => (t.id === id ? { ...t, x, y } : t)));
   };
 
+  const updateSelectedTable = (updates: Partial<TableItem>) => {
+    if (!selectedTable) return;
+    const updated = { ...selectedTable, ...updates };
+    setTables(prev => prev.map(t => (t.id === updated.id ? updated : t)));
+    setSelectedTable(updated);
+  };
+
   const addGuestToTable = () => {
     if (!selectedTable || !newGuestName.trim()) return;
+    if (editingGuestId) {
+      const updated = {
+        ...selectedTable,
+        guests: selectedTable.guests.map(guest => guest.id === editingGuestId
+          ? {
+              ...guest,
+              name: newGuestName.trim(),
+              dietary: newGuestDiet.trim() || undefined,
+              isVip: newGuestIsVip
+            }
+          : guest)
+      };
+      setTables(prev => prev.map(t => (t.id === updated.id ? updated : t)));
+      setSelectedTable(updated);
+      resetGuestForm();
+      return;
+    }
+
     const newGuest: Guest = {
       id: `g_${Date.now()}`,
       name: newGuestName.trim(),
-      dietary: newGuestDiet.trim() || undefined
+      dietary: newGuestDiet.trim() || undefined,
+      isVip: newGuestIsVip
     };
     const updated = {
       ...selectedTable,
-      guests: [...selectedTable.guests, newGuest]
+      guests: [...selectedTable.guests, newGuest],
+      capacity: Math.max(selectedTable.capacity, selectedTable.guests.length + 1)
     };
     setTables(prev => prev.map(t => (t.id === selectedTable.id ? updated : t)));
     setSelectedTable(updated);
+    resetGuestForm();
+  };
+
+  const resetGuestForm = () => {
+    setEditingGuestId(null);
     setNewGuestName('');
     setNewGuestDiet('');
+    setNewGuestIsVip(false);
+  };
+
+  const editGuest = (guest: Guest) => {
+    setEditingGuestId(guest.id);
+    setNewGuestName(guest.name);
+    setNewGuestDiet(guest.dietary ?? '');
+    setNewGuestIsVip(guest.isVip ?? false);
   };
 
   const removeGuestFromTable = (guestId: string) => {
@@ -270,10 +450,12 @@ export default function App() {
     };
     setTables(prev => prev.map(t => (t.id === selectedTable.id ? updated : t)));
     setSelectedTable(updated);
+    if (editingGuestId === guestId) resetGuestForm();
   };
 
   const deleteTable = (id: string) => {
     setTables(prev => prev.filter(t => t.id !== id));
+    resetGuestForm();
     setSelectedTable(null);
   };
 
@@ -284,8 +466,8 @@ export default function App() {
       {/* iOS Minimalist Top Bar */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.headerTitle}>AislePlan</Text>
-          <Text style={styles.headerSubtitle}>Wedding Seating Chart · Expo 58</Text>
+          <Text style={styles.headerTitle}>Plan With Archie</Text>
+          <Text style={styles.headerSubtitle}>Wedding Seating Chart · by ArchieLabs</Text>
         </View>
         <View style={styles.headerActions}>
           <TouchableOpacity onPress={saveToLocalStorage} style={styles.btnSecondary} activeOpacity={0.7}>
@@ -304,7 +486,10 @@ export default function App() {
             key={table.id}
             table={table}
             onDragEnd={(x, y) => updateTablePosition(table.id, x, y)}
-            onPress={() => setSelectedTable(table)}
+            onPress={() => {
+              resetGuestForm();
+              setSelectedTable(table);
+            }}
           />
         ))}
       </View>
@@ -332,9 +517,15 @@ export default function App() {
         visible={selectedTable !== null}
         animationType="slide"
         transparent={true}
-        onRequestClose={() => setSelectedTable(null)}
+        onRequestClose={() => {
+          resetGuestForm();
+          setSelectedTable(null);
+        }}
       >
-        <View style={styles.modalOverlay}>
+        <KeyboardAvoidingView
+          style={styles.modalOverlay}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
           <View style={styles.modalContent}>
             <View style={styles.sheetHandle} />
 
@@ -345,13 +536,23 @@ export default function App() {
                   {selectedTable?.shape.toUpperCase()} · {selectedTable?.guests.length}/{selectedTable?.capacity} Seats
                 </Text>
               </View>
-              <TouchableOpacity onPress={() => setSelectedTable(null)} style={styles.closeBtn}>
+              <TouchableOpacity
+                onPress={() => {
+                  resetGuestForm();
+                  setSelectedTable(null);
+                }}
+                style={styles.closeBtn}
+              >
                 <Text style={styles.closeBtnText}>Done</Text>
               </TouchableOpacity>
             </View>
 
             {/* Guest list at table */}
-            <ScrollView style={styles.guestListContainer}>
+            <ScrollView
+              style={styles.guestListContainer}
+              keyboardShouldPersistTaps="handled"
+              keyboardDismissMode="interactive"
+            >
               <Text style={styles.sectionHeading}>Seated Guests</Text>
               {selectedTable?.guests.length === 0 ? (
                 <Text style={styles.emptyText}>No people seated at this table yet.</Text>
@@ -361,10 +562,16 @@ export default function App() {
                     <View style={styles.seatNumBadge}>
                       <Text style={styles.seatNumText}>{idx + 1}</Text>
                     </View>
-                    <View style={{ flex: 1, marginLeft: 10 }}>
+                    <TouchableOpacity
+                      onPress={() => editGuest(g)}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Edit ${g.name}`}
+                      style={styles.guestDetails}
+                    >
                       <Text style={styles.guestNameText}>{g.name}</Text>
                       {g.dietary ? <Text style={styles.guestDietText}>{g.dietary}</Text> : null}
-                    </View>
+                      {g.isVip ? <Text style={styles.vipGuestText}>VIP</Text> : null}
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => removeGuestFromTable(g.id)} style={styles.removeBtn}>
                       <Text style={styles.removeBtnText}>Remove</Text>
                     </TouchableOpacity>
@@ -374,7 +581,9 @@ export default function App() {
 
               {/* Add person input */}
               <View style={styles.addGuestBox}>
-                <Text style={styles.sectionHeading}>Add Person to Table</Text>
+                <Text style={styles.sectionHeading}>
+                  {editingGuestId ? 'Edit Person' : 'Add Person to Table'}
+                </Text>
                 <TextInput
                   placeholder="Guest Full Name..."
                   placeholderTextColor="#94a3b8"
@@ -389,9 +598,26 @@ export default function App() {
                   onChangeText={setNewGuestDiet}
                   style={styles.input}
                 />
-                <TouchableOpacity onPress={addGuestToTable} style={styles.addBtn} activeOpacity={0.8}>
-                  <Text style={styles.addBtnText}>+ Seat Guest</Text>
+                <TouchableOpacity
+                  accessibilityRole="checkbox"
+                  accessibilityState={{ checked: newGuestIsVip }}
+                  onPress={() => setNewGuestIsVip(value => !value)}
+                  style={[styles.vipToggle, newGuestIsVip && styles.vipToggleActive]}
+                >
+                  <Text style={[styles.vipToggleText, newGuestIsVip && styles.vipToggleTextActive]}>
+                    {newGuestIsVip ? '★ VIP guest' : '☆ Mark as VIP'}
+                  </Text>
                 </TouchableOpacity>
+                <TouchableOpacity onPress={addGuestToTable} style={styles.addBtn} activeOpacity={0.8}>
+                  <Text style={styles.addBtnText}>
+                    {editingGuestId ? 'Save Changes' : '+ Seat Guest'}
+                  </Text>
+                </TouchableOpacity>
+                {editingGuestId ? (
+                  <TouchableOpacity onPress={resetGuestForm} style={styles.cancelEditBtn}>
+                    <Text style={styles.cancelEditText}>Cancel editing</Text>
+                  </TouchableOpacity>
+                ) : null}
               </View>
 
               <TouchableOpacity
@@ -401,8 +627,117 @@ export default function App() {
                 <Text style={styles.deleteTableBtnText}>Delete This Table</Text>
               </TouchableOpacity>
             </ScrollView>
+
+            {selectedTable ? (
+              <View style={styles.tableControls}>
+                <View style={styles.controlRow}>
+                  <Text style={styles.controlLabel}>Seats</Text>
+                  <View style={styles.stepper}>
+                    <TouchableOpacity
+                      onPress={() => updateSelectedTable({ capacity: selectedTable.capacity - 1 })}
+                      disabled={selectedTable.capacity <= Math.max(1, selectedTable.guests.length)}
+                      style={styles.stepperButton}
+                    >
+                      <Text style={styles.stepperButtonText}>−</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.controlValue}>{selectedTable.capacity}</Text>
+                    <TouchableOpacity
+                      onPress={() => updateSelectedTable({ capacity: selectedTable.capacity + 1 })}
+                      style={styles.stepperButton}
+                    >
+                      <Text style={styles.stepperButtonText}>+</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <View style={styles.controlRow}>
+                  <Text style={styles.controlLabel}>Overall size</Text>
+                  <View style={styles.stepper}>
+                    <TouchableOpacity
+                      onPress={() => updateSelectedTable({ scale: Math.max(0.6, Number(((selectedTable.scale ?? 1) - 0.1).toFixed(1))) })}
+                      disabled={(selectedTable.scale ?? 1) <= 0.6}
+                      style={styles.stepperButton}
+                    >
+                      <Text style={styles.stepperButtonText}>−</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.controlValue}>{Math.round((selectedTable.scale ?? 1) * 100)}%</Text>
+                    <TouchableOpacity
+                      onPress={() => updateSelectedTable({ scale: Math.min(1.8, Number(((selectedTable.scale ?? 1) + 0.1).toFixed(1))) })}
+                      disabled={(selectedTable.scale ?? 1) >= 1.8}
+                      style={styles.stepperButton}
+                    >
+                      <Text style={styles.stepperButtonText}>+</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                {selectedTable.shape === 'rectangle' ? (
+                  <>
+                    <View style={styles.controlRow}>
+                      <Text style={styles.controlLabel}>Length</Text>
+                      <View style={styles.stepper}>
+                        <TouchableOpacity
+                          onPress={() => updateSelectedTable({
+                            lengthScale: Math.max(0.6, Math.round(((selectedTable.lengthScale ?? 1) - 0.1) * 10) / 10)
+                          })}
+                          disabled={(selectedTable.lengthScale ?? 1) <= 0.6}
+                          style={styles.stepperButton}
+                        >
+                          <Text style={styles.stepperButtonText}>−</Text>
+                        </TouchableOpacity>
+                        <Text style={styles.controlValue}>
+                          {Math.round((selectedTable.lengthScale ?? 1) * 100)}%
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => updateSelectedTable({
+                            lengthScale: Math.min(2.5, Math.round(((selectedTable.lengthScale ?? 1) + 0.1) * 10) / 10)
+                          })}
+                          disabled={(selectedTable.lengthScale ?? 1) >= 2.5}
+                          style={styles.stepperButton}
+                        >
+                          <Text style={styles.stepperButtonText}>+</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                    <View style={styles.controlRow}>
+                      <Text style={styles.controlLabel}>Width</Text>
+                      <View style={styles.stepper}>
+                        <TouchableOpacity
+                          onPress={() => updateSelectedTable({
+                            widthScale: Math.max(0.6, Math.round(((selectedTable.widthScale ?? 1) - 0.1) * 10) / 10)
+                          })}
+                          disabled={(selectedTable.widthScale ?? 1) <= 0.6}
+                          style={styles.stepperButton}
+                        >
+                          <Text style={styles.stepperButtonText}>−</Text>
+                        </TouchableOpacity>
+                        <Text style={styles.controlValue}>
+                          {Math.round((selectedTable.widthScale ?? 1) * 100)}%
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => updateSelectedTable({
+                            widthScale: Math.min(2.5, Math.round(((selectedTable.widthScale ?? 1) + 0.1) * 10) / 10)
+                          })}
+                          disabled={(selectedTable.widthScale ?? 1) >= 2.5}
+                          style={styles.stepperButton}
+                        >
+                          <Text style={styles.stepperButtonText}>+</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </>
+                ) : null}
+                <View style={styles.controlRow}>
+                  <Text style={styles.controlLabel}>Rotation</Text>
+                  <TouchableOpacity
+                    onPress={() => updateSelectedTable({ rotation: ((selectedTable.rotation ?? 0) + 90) % 360 })}
+                    style={styles.rotateButton}
+                  >
+                    <Text style={styles.rotateButtonText}>↻ Rotate</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ) : null}
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
   );
@@ -461,21 +796,22 @@ function DraggableTableNode({
   };
 
   // Dimensions based on shape
-  let tableWidth = 100;
-  let tableHeight = 100;
-  let borderRadius = 50;
+  const scale = table.scale ?? 1;
+  let tableWidth = 100 * scale;
+  let tableHeight = 100 * scale;
+  let borderRadius = 50 * scale;
 
   if (table.shape === 'round') {
-    tableWidth = 100;
-    tableHeight = 100;
-    borderRadius = 50;
+    tableWidth = 100 * scale;
+    tableHeight = 100 * scale;
+    borderRadius = 50 * scale;
   } else if (table.shape === 'rectangle') {
-    tableWidth = 136;
-    tableHeight = 80;
+    tableWidth = 136 * scale * (table.lengthScale ?? 1);
+    tableHeight = 80 * scale * (table.widthScale ?? 1);
     borderRadius = 14;
   } else {
-    tableWidth = 92;
-    tableHeight = 92;
+    tableWidth = 92 * scale;
+    tableHeight = 92 * scale;
     borderRadius = 14;
   }
 
@@ -498,60 +834,49 @@ function DraggableTableNode({
       });
     }
   } else if (table.shape === 'rectangle') {
-    const half = Math.ceil(table.capacity / 2);
-    // Top side chairs
-    for (let i = 0; i < half; i++) {
-      const cx = 20 + ((tableWidth - 40) * (i + 0.5)) / half - chairSize / 2;
-      const cy = -chairSize / 2 - 3;
+    const topSeats = Math.ceil(table.capacity / 2);
+    const bottomSeats = Math.floor(table.capacity / 2);
+    for (let i = 0; i < topSeats; i++) {
       chairs.push({
-        x: cx,
-        y: cy,
+        x: 20 + ((tableWidth - 40) * (i + 0.5)) / topSeats - chairSize / 2,
+        y: -chairSize / 2 - 3,
         seatNum: i + 1,
         guest: table.guests[i]
       });
     }
-    // Bottom side chairs
-    for (let i = 0; i < half; i++) {
-      const cx = 20 + ((tableWidth - 40) * (i + 0.5)) / half - chairSize / 2;
-      const cy = tableHeight - chairSize / 2 + 3;
+    for (let i = 0; i < bottomSeats; i++) {
       chairs.push({
-        x: cx,
-        y: cy,
-        seatNum: half + i + 1,
-        guest: table.guests[half + i]
+        x: 20 + ((tableWidth - 40) * (i + 0.5)) / bottomSeats - chairSize / 2,
+        y: tableHeight - chairSize / 2 + 3,
+        seatNum: topSeats + i + 1,
+        guest: table.guests[topSeats + i]
       });
     }
   } else {
-    // Square: 4 sides
-    const seatsPerSide = Math.max(1, Math.round(table.capacity / 4));
-    let sIdx = 0;
-    // Top
-    for (let i = 0; i < seatsPerSide; i++) {
-      const cx = ((tableWidth) * (i + 0.5)) / seatsPerSide - chairSize / 2;
-      const cy = -chairSize / 2 - 3;
-      chairs.push({ x: cx, y: cy, seatNum: sIdx + 1, guest: table.guests[sIdx] });
-      sIdx++;
-    }
-    // Right
-    for (let i = 0; i < seatsPerSide; i++) {
-      const cx = tableWidth - chairSize / 2 + 3;
-      const cy = ((tableHeight) * (i + 0.5)) / seatsPerSide - chairSize / 2;
-      chairs.push({ x: cx, y: cy, seatNum: sIdx + 1, guest: table.guests[sIdx] });
-      sIdx++;
-    }
-    // Bottom
-    for (let i = 0; i < seatsPerSide; i++) {
-      const cx = ((tableWidth) * (i + 0.5)) / seatsPerSide - chairSize / 2;
-      const cy = tableHeight - chairSize / 2 + 3;
-      chairs.push({ x: cx, y: cy, seatNum: sIdx + 1, guest: table.guests[sIdx] });
-      sIdx++;
-    }
-    // Left
-    for (let i = 0; i < seatsPerSide; i++) {
-      const cx = -chairSize / 2 - 3;
-      const cy = ((tableHeight) * (i + 0.5)) / seatsPerSide - chairSize / 2;
-      chairs.push({ x: cx, y: cy, seatNum: sIdx + 1, guest: table.guests[sIdx] });
-      sIdx++;
+    const perimeter = 2 * (tableWidth + tableHeight);
+    for (let i = 0; i < table.capacity; i++) {
+      const position = ((i + 0.5) * perimeter) / table.capacity;
+      let x: number;
+      let y: number;
+      if (position < tableWidth) {
+        x = position;
+        y = -chairSize / 2 - 3;
+      } else if (position < tableWidth + tableHeight) {
+        x = tableWidth + chairSize / 2 + 3;
+        y = position - tableWidth;
+      } else if (position < 2 * tableWidth + tableHeight) {
+        x = tableWidth - (position - tableWidth - tableHeight);
+        y = tableHeight + chairSize / 2 + 3;
+      } else {
+        x = -chairSize / 2 - 3;
+        y = tableHeight - (position - 2 * tableWidth - tableHeight);
+      }
+      chairs.push({
+        x: x - chairSize / 2,
+        y: y - chairSize / 2,
+        seatNum: i + 1,
+        guest: table.guests[i]
+      });
     }
   }
 
@@ -563,7 +888,7 @@ function DraggableTableNode({
         {
           width: tableWidth,
           height: tableHeight,
-          transform: pan.getTranslateTransform()
+          transform: [...pan.getTranslateTransform(), { rotate: `${table.rotation ?? 0}deg` }]
         }
       ]}
     >
@@ -850,7 +1175,8 @@ const styles = StyleSheet.create({
     color: '#0f172a'
   },
   guestListContainer: {
-    marginBottom: 20
+    marginBottom: 20,
+    flexShrink: 1
   },
   sectionHeading: {
     fontSize: 12,
@@ -871,6 +1197,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#f1f5f9'
+  },
+  guestDetails: {
+    flex: 1,
+    marginLeft: 10,
+    paddingVertical: 2
   },
   seatNumBadge: {
     width: 22,
@@ -894,6 +1225,12 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#dc2626',
     fontWeight: '500'
+  },
+  vipGuestText: {
+    fontSize: 10,
+    color: '#92400e',
+    fontWeight: '700',
+    marginTop: 2
   },
   removeBtn: {
     paddingHorizontal: 8,
@@ -922,6 +1259,81 @@ const styles = StyleSheet.create({
     color: '#0f172a',
     marginBottom: 8
   },
+  vipToggle: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    marginBottom: 10
+  },
+  vipToggleActive: {
+    backgroundColor: '#fef3c7',
+    borderColor: '#d97706'
+  },
+  vipToggleText: {
+    color: '#475569',
+    fontSize: 12,
+    fontWeight: '700'
+  },
+  vipToggleTextActive: {
+    color: '#92400e'
+  },
+  tableControls: {
+    borderTopWidth: 1,
+    borderTopColor: '#f1f5f9',
+    paddingTop: 12,
+    gap: 10
+  },
+  controlRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8
+  },
+  controlLabel: {
+    color: '#475569',
+    fontSize: 13,
+    fontWeight: '600'
+  },
+  stepper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12
+  },
+  stepperButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 9,
+    backgroundColor: '#f1f5f9',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  stepperButtonText: {
+    color: '#0f172a',
+    fontSize: 18,
+    fontWeight: '700'
+  },
+  controlValue: {
+    minWidth: 40,
+    color: '#0f172a',
+    textAlign: 'center',
+    fontSize: 13,
+    fontWeight: '700'
+  },
+  rotateButton: {
+    backgroundColor: '#f1f5f9',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 9
+  },
+  rotateButtonText: {
+    color: '#0f172a',
+    fontSize: 12,
+    fontWeight: '700'
+  },
   addBtn: {
     backgroundColor: '#0f172a',
     paddingVertical: 12,
@@ -932,6 +1344,15 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 13,
     fontWeight: '700'
+  },
+  cancelEditBtn: {
+    alignItems: 'center',
+    paddingVertical: 10
+  },
+  cancelEditText: {
+    color: '#64748b',
+    fontSize: 12,
+    fontWeight: '600'
   },
   deleteTableBtn: {
     paddingVertical: 12,
