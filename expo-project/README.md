@@ -2,25 +2,28 @@
 
 Minimalist, touch-first iOS mobile application for creating wedding seating floor plans, seating guests at round, square, and rectangular tables, saving layout state to local storage (`AsyncStorage`) as JSON, and generating official venue layout PDFs using `expo-print` & `expo-sharing`.
 
-## Quick Start with Expo SDK 58
+## Setup & Run Instructions
 
-1. **Install dependencies:**
+1. **Install and Align Dependencies for Expo SDK 58:**
    ```bash
    npm install
+   npx expo install --fix
    ```
+   *(Note: Expo SDK 58 pairs with `react-native@0.88.0` and `react@19.0.0`)*
 
-2. **Start the Expo development server:**
+2. **Start Expo with Cleared Cache:**
    ```bash
-   npx expo start
+   npx expo start -c
    ```
 
 3. **Run on iOS:**
    - Press `i` to launch in the iOS Simulator (macOS with Xcode).
    - Or scan the QR code with your iPhone camera to open directly in the **Expo Go** app.
 
-## Features
-- **Touch-Based Drag & Drop**: Native `PanResponder` physics for repositioning tables around the room.
-- **Table Shapes**: Round, Square, and Rectangle (banquet) tables with customizable capacity.
-- **Guest Management**: Add people, assign seats, and track dietary requirements (e.g. Vegetarian, Gluten-Free) and VIP status.
-- **JSON Local Storage**: Saves seating layout to device storage using `@react-native-async-storage/async-storage`.
-- **Venue PDF Export**: One-tap vector PDF generation with `expo-print` and native iOS Share Sheet / AirDrop via `expo-sharing`.
+## Troubleshooting
+If you see `Unable to resolve module react-native/unstable-internals-do-not-use`, it indicates that `react-native` was installed with an older version (< 0.88). Simply run:
+```bash
+npx expo install --fix
+npx expo start -c
+```
+This aligns all dependencies with Expo SDK 58.0.22.

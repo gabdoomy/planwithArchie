@@ -43,16 +43,14 @@ export const ExpoCodeModal: React.FC<ExpoCodeModalProps> = ({ isOpen, onClose })
     "expo-print": "~14.0.2",
     "expo-sharing": "~13.0.0",
     "@react-native-async-storage/async-storage": "1.24.0",
-    "react": "18.3.1",
-    "react-native": "0.76.7",
-    "react-native-gesture-handler": "~2.20.2",
-    "react-native-reanimated": "~3.16.1",
+    "react": "19.0.0",
+    "react-native": "0.88.0",
     "react-native-safe-area-context": "4.12.0",
     "react-native-screens": "~4.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
-    "@types/react": "~18.3.12",
+    "@types/react": "~19.0.0",
     "typescript": "^5.3.3"
   },
   "private": true
