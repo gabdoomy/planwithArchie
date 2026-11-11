@@ -44,6 +44,8 @@ function DraggableTableNode({
 }) {
   const pan = useRef(new Animated.ValueXY({ x: table.x, y: table.y })).current;
   const currentPos = useRef({ x: table.x, y: table.y });
+  const onPressRef = useRef(onPress);
+  onPressRef.current = onPress;
 
   useEffect(() => {
     pan.setValue({ x: table.x, y: table.y });
@@ -70,7 +72,7 @@ function DraggableTableNode({
         onDragEnd(finalX, finalY);
 
         if (Math.abs(gesture.dx) < 5 && Math.abs(gesture.dy) < 5) {
-          onPress();
+          onPressRef.current();
         }
       }
     })
