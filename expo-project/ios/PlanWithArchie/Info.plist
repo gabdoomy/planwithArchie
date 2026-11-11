@@ -27,7 +27,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.alex.g.dumitrescu.planwitharchie</string>
+				<string>com.archielabs.planwitharchie</string>
 			</array>
 		</dict>
 	</array>
