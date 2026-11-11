@@ -178,12 +178,11 @@ export const TableCanvasItem: React.FC<TableCanvasItemProps> = ({
       {seats.map((seat) => {
         const isOccupied = !!seat.guest;
         const initials = seat.guest
-          ? seat.guest.name
-              .split(' ')
-              .map(n => n[0])
-              .join('')
-              .toUpperCase()
-              .slice(0, 2)
+          ? (() => {
+              const parts = seat.guest.name.trim().split(' ').filter(Boolean);
+              if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+              return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+            })()
           : `${seat.seatNum}`;
 
         return (
@@ -198,10 +197,10 @@ export const TableCanvasItem: React.FC<TableCanvasItemProps> = ({
               borderRadius: '50%'
             }}
             title={seat.guest ? `${seat.guest.name} (${seat.guest.dietary})` : `Seat ${seat.seatNum} (Empty)`}
-            className={`flex items-center justify-center text-[9px] font-semibold transition-transform duration-150 ${
+            className={`flex items-center justify-center text-[9.5px] font-bold tracking-tight transition-transform duration-150 z-20 ${
               isOccupied
                 ? seat.guest?.isVip
-                  ? 'bg-amber-100 text-amber-900 border border-amber-300 shadow-xs ring-1 ring-amber-400'
+                  ? 'bg-amber-100 text-amber-900 border border-amber-400 shadow-xs ring-1 ring-amber-400'
                   : 'bg-neutral-900 text-white shadow-xs'
                 : 'bg-white text-neutral-400 border border-neutral-300'
             }`}

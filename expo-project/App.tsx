@@ -408,7 +408,7 @@ export default function App() {
   );
 }
 
-// Touch Drag-and-Drop Table Node with PanResponder
+// Touch Drag-and-Drop Table Node with Chairs and Guest Initials
 function DraggableTableNode({
   table,
   onDragEnd,
@@ -440,12 +440,11 @@ function DraggableTableNode({
       onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], { useNativeDriver: false }),
       onPanResponderRelease: (_, gesture) => {
         pan.flattenOffset();
-        const finalX = Math.max(10, Math.min(SCREEN_WIDTH - 110, currentPos.current.x + gesture.dx));
-        const finalY = Math.max(10, Math.min(SCREEN_HEIGHT - 220, currentPos.current.y + gesture.dy));
+        const finalX = Math.max(10, Math.min(SCREEN_WIDTH - 130, currentPos.current.x + gesture.dx));
+        const finalY = Math.max(10, Math.min(SCREEN_HEIGHT - 240, currentPos.current.y + gesture.dy));
         currentPos.current = { x: finalX, y: finalY };
         onDragEnd(finalX, finalY);
 
-        // If very little movement, treat as tap to inspect
         if (Math.abs(gesture.dx) < 5 && Math.abs(gesture.dy) < 5) {
           onPress();
         }
@@ -453,31 +452,170 @@ function DraggableTableNode({
     })
   ).current;
 
-  const getShapeStyle = () => {
-    if (table.shape === 'round') {
-      return { borderRadius: 45, width: 90, height: 90 };
-    }
-    if (table.shape === 'rectangle') {
-      return { borderRadius: 14, width: 120, height: 74 };
-    }
-    return { borderRadius: 14, width: 84, height: 84 };
+  // Extract 2-letter uppercase initials
+  const getInitials = (name?: string) => {
+    if (!name) return '';
+    const parts = name.trim().split(' ').filter(Boolean);
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
+
+  // Dimensions based on shape
+  let tableWidth = 100;
+  let tableHeight = 100;
+  let borderRadius = 50;
+
+  if (table.shape === 'round') {
+    tableWidth = 100;
+    tableHeight = 100;
+    borderRadius = 50;
+  } else if (table.shape === 'rectangle') {
+    tableWidth = 136;
+    tableHeight = 80;
+    borderRadius = 14;
+  } else {
+    tableWidth = 92;
+    tableHeight = 92;
+    borderRadius = 14;
+  }
+
+  // Calculate chair positions around table
+  const chairs: { x: number; y: number; seatNum: number; guest?: Guest }[] = [];
+  const chairSize = 24;
+
+  if (table.shape === 'round') {
+    const radius = tableWidth / 2;
+    const chairDistance = radius + 15;
+    for (let i = 0; i < table.capacity; i++) {
+      const angle = (i * 2 * Math.PI) / table.capacity - Math.PI / 2;
+      const cx = radius + Math.cos(angle) * chairDistance - chairSize / 2;
+      const cy = radius + Math.sin(angle) * chairDistance - chairSize / 2;
+      chairs.push({
+        x: cx,
+        y: cy,
+        seatNum: i + 1,
+        guest: table.guests[i]
+      });
+    }
+  } else if (table.shape === 'rectangle') {
+    const half = Math.ceil(table.capacity / 2);
+    // Top side chairs
+    for (let i = 0; i < half; i++) {
+      const cx = 20 + ((tableWidth - 40) * (i + 0.5)) / half - chairSize / 2;
+      const cy = -chairSize / 2 - 3;
+      chairs.push({
+        x: cx,
+        y: cy,
+        seatNum: i + 1,
+        guest: table.guests[i]
+      });
+    }
+    // Bottom side chairs
+    for (let i = 0; i < half; i++) {
+      const cx = 20 + ((tableWidth - 40) * (i + 0.5)) / half - chairSize / 2;
+      const cy = tableHeight - chairSize / 2 + 3;
+      chairs.push({
+        x: cx,
+        y: cy,
+        seatNum: half + i + 1,
+        guest: table.guests[half + i]
+      });
+    }
+  } else {
+    // Square: 4 sides
+    const seatsPerSide = Math.max(1, Math.round(table.capacity / 4));
+    let sIdx = 0;
+    // Top
+    for (let i = 0; i < seatsPerSide; i++) {
+      const cx = ((tableWidth) * (i + 0.5)) / seatsPerSide - chairSize / 2;
+      const cy = -chairSize / 2 - 3;
+      chairs.push({ x: cx, y: cy, seatNum: sIdx + 1, guest: table.guests[sIdx] });
+      sIdx++;
+    }
+    // Right
+    for (let i = 0; i < seatsPerSide; i++) {
+      const cx = tableWidth - chairSize / 2 + 3;
+      const cy = ((tableHeight) * (i + 0.5)) / seatsPerSide - chairSize / 2;
+      chairs.push({ x: cx, y: cy, seatNum: sIdx + 1, guest: table.guests[sIdx] });
+      sIdx++;
+    }
+    // Bottom
+    for (let i = 0; i < seatsPerSide; i++) {
+      const cx = ((tableWidth) * (i + 0.5)) / seatsPerSide - chairSize / 2;
+      const cy = tableHeight - chairSize / 2 + 3;
+      chairs.push({ x: cx, y: cy, seatNum: sIdx + 1, guest: table.guests[sIdx] });
+      sIdx++;
+    }
+    // Left
+    for (let i = 0; i < seatsPerSide; i++) {
+      const cx = -chairSize / 2 - 3;
+      const cy = ((tableHeight) * (i + 0.5)) / seatsPerSide - chairSize / 2;
+      chairs.push({ x: cx, y: cy, seatNum: sIdx + 1, guest: table.guests[sIdx] });
+      sIdx++;
+    }
+  }
 
   return (
     <Animated.View
       {...panResponder.panHandlers}
       style={[
-        styles.tableNode,
-        getShapeStyle(),
+        styles.tableWrapper,
         {
+          width: tableWidth,
+          height: tableHeight,
           transform: pan.getTranslateTransform()
         }
       ]}
     >
-      <Text style={styles.tableNodeName} numberOfLines={1}>{table.name}</Text>
-      <Text style={styles.tableNodeCapacity}>
-        {table.guests.length} / {table.capacity}
-      </Text>
+      {/* Visual Chairs with Guest Initials */}
+      {chairs.map(seat => {
+        const hasGuest = !!seat.guest;
+        return (
+          <View
+            key={seat.seatNum}
+            style={[
+              styles.chairNode,
+              { left: seat.x, top: seat.y },
+              hasGuest
+                ? seat.guest?.isVip
+                  ? styles.chairVip
+                  : styles.chairOccupied
+                : styles.chairEmpty
+            ]}
+          >
+            <Text
+              style={[
+                styles.chairText,
+                hasGuest
+                  ? seat.guest?.isVip
+                    ? styles.chairTextVip
+                    : styles.chairTextOccupied
+                  : styles.chairTextEmpty
+              ]}
+              numberOfLines={1}
+            >
+              {hasGuest ? getInitials(seat.guest?.name) : seat.seatNum}
+            </Text>
+          </View>
+        );
+      })}
+
+      {/* Main Table Surface */}
+      <View
+        style={[
+          styles.tableNode,
+          {
+            width: tableWidth,
+            height: tableHeight,
+            borderRadius
+          }
+        ]}
+      >
+        <Text style={styles.tableNodeName} numberOfLines={1}>{table.name}</Text>
+        <Text style={styles.tableNodeCapacity}>
+          {table.guests.length} / {table.capacity}
+        </Text>
+      </View>
     </Animated.View>
   );
 }
@@ -539,8 +677,12 @@ const styles = StyleSheet.create({
     position: 'relative',
     backgroundColor: '#f8fafc'
   },
-  tableNode: {
+  tableWrapper: {
     position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  tableNode: {
     backgroundColor: '#ffffff',
     borderWidth: 2,
     borderColor: '#0f172a',
@@ -551,6 +693,52 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.12,
     shadowRadius: 6,
     elevation: 4
+  },
+  chairNode: {
+    position: 'absolute',
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 20
+  },
+  chairOccupied: {
+    backgroundColor: '#0f172a',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3
+  },
+  chairVip: {
+    backgroundColor: '#fef3c7',
+    borderWidth: 1.5,
+    borderColor: '#d97706',
+    shadowColor: '#d97706',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3
+  },
+  chairEmpty: {
+    backgroundColor: '#ffffff',
+    borderWidth: 1.5,
+    borderColor: '#cbd5e1'
+  },
+  chairText: {
+    fontSize: 9,
+    fontWeight: '800',
+    textAlign: 'center'
+  },
+  chairTextOccupied: {
+    color: '#ffffff'
+  },
+  chairTextVip: {
+    color: '#92400e'
+  },
+  chairTextEmpty: {
+    color: '#94a3b8'
   },
   tableNodeName: {
     fontSize: 12,
