@@ -1,5 +1,14 @@
 {
+  "name": "Plan With Archie",
+  "slug": "plan-with-archie",
+  "icon": "./assets/icon.png",
+  "splash": {
+    "image": "./assets/splash.png",
+    "resizeMode": "contain",
+    "backgroundColor": "#F7F4EC"
+  },
   "ios": {
+    "icon": "./assets/icon.png",
     "bundleIdentifier": "com.archielabs.planwitharchie",
     "supportsTablet": true
   },
