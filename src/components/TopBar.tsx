@@ -49,17 +49,19 @@ export const TopBar: React.FC<TopBarProps> = ({
       />
 
       <div className="flex items-center justify-between gap-8 px-6 py-3.5">
-        {/* Zone 1: Brand Wordmark */}
+        {/* Zone 1: Brand Wordmark & Mobile Tag */}
         <div className="flex items-center gap-3 shrink-0">
           <div className="w-8 h-8 rounded-xl bg-neutral-900 text-white flex items-center justify-center font-bold text-sm tracking-tight shadow-xs">
             AP
           </div>
-          <span className="text-base font-bold tracking-tight text-neutral-900 whitespace-nowrap">
-            AislePlan
-          </span>
-          <span className="hidden lg:inline text-xs text-neutral-400 font-medium">
-            / {weddingName}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-base font-bold tracking-tight text-neutral-900 whitespace-nowrap">
+              AislePlan
+            </span>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-700 font-semibold border border-neutral-200">
+              Expo SDK 58.0.22
+            </span>
+          </div>
         </div>
 
         {/* Zone 2: Navigation Links & Actions (Single-line whitespace-nowrap) */}
@@ -71,7 +73,7 @@ export const TopBar: React.FC<TopBarProps> = ({
             }`}
           >
             {hasSavedRecently ? <Check className="w-3.5 h-3.5" /> : null}
-            <span>{hasSavedRecently ? 'Saved' : 'Save'}</span>
+            <span>{hasSavedRecently ? 'Saved' : 'Save JSON'}</span>
           </button>
 
           <button
@@ -90,23 +92,14 @@ export const TopBar: React.FC<TopBarProps> = ({
 
           <button
             onClick={onOpenExpoCode}
-            className="flex items-center gap-1.5 hover:text-neutral-900 transition-colors whitespace-nowrap shrink-0"
+            className="flex items-center gap-1.5 text-indigo-700 hover:text-indigo-900 font-bold transition-colors whitespace-nowrap shrink-0"
           >
-            <span>Expo Code</span>
+            <Smartphone className="w-3.5 h-3.5" />
+            <span>Expo Mobile App</span>
           </button>
 
           {/* Device Frame View Selector */}
           <div className="hidden md:flex items-center gap-1 p-0.5 bg-neutral-100 rounded-lg text-[11px]">
-            <button
-              onClick={() => onChangeDeviceView('fullscreen')}
-              className={`px-2 py-1 rounded-md transition-all whitespace-nowrap ${
-                deviceView === 'fullscreen'
-                  ? 'bg-white text-neutral-900 font-bold shadow-2xs'
-                  : 'text-neutral-500 hover:text-neutral-800'
-              }`}
-            >
-              Canvas
-            </button>
             <button
               onClick={() => onChangeDeviceView('iphone')}
               className={`px-2 py-1 rounded-md transition-all whitespace-nowrap ${
@@ -126,6 +119,16 @@ export const TopBar: React.FC<TopBarProps> = ({
               }`}
             >
               iPad
+            </button>
+            <button
+              onClick={() => onChangeDeviceView('fullscreen')}
+              className={`px-2 py-1 rounded-md transition-all whitespace-nowrap ${
+                deviceView === 'fullscreen'
+                  ? 'bg-white text-neutral-900 font-bold shadow-2xs'
+                  : 'text-neutral-500 hover:text-neutral-800'
+              }`}
+            >
+              Canvas
             </button>
           </div>
         </nav>

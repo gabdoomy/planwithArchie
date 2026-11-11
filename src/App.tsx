@@ -37,7 +37,7 @@ export default function App() {
   // Toggles
   const [snapToGrid, setSnapToGrid] = useState(true);
   const [showGrid, setShowGrid] = useState(true);
-  const [deviceView, setDeviceView] = useState<'fullscreen' | 'iphone' | 'ipad'>('fullscreen');
+  const [deviceView, setDeviceView] = useState<'fullscreen' | 'iphone' | 'ipad'>('iphone');
   const [hasSavedRecently, setHasSavedRecently] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
