@@ -1,0 +1,6 @@
+{
+  "name": "AislePlan - iOS Wedding Seating Chart",
+  "description": "Minimalist touch-first wedding seating chart and floor plan builder with round, square, and rectangle tables, guest management, JSON local storage, and venue PDF export.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
