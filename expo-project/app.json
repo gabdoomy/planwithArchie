@@ -1,6 +1,7 @@
 {
   "ios": {
-    "bundleIdentifier": "com.archielabs.planwitharchie"
+    "bundleIdentifier": "com.archielabs.planwitharchie",
+    "supportsTablet": true
   },
   "plugins": [
     "expo-font"
