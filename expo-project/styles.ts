@@ -61,7 +61,15 @@ const styles = StyleSheet.create({
   canvasContainer: {
     flex: 1,
     position: 'relative',
+    overflow: 'hidden',
     backgroundColor: '#f8fafc'
+  },
+  canvasScene: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%'
   },
   tableWrapper: {
     position: 'absolute',

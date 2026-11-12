@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import {
   Animated,
-  Dimensions,
   PanResponder,
   Text,
   View
@@ -10,8 +9,6 @@ import type { Guest, TableItem } from '../types';
 import { venueItemColors, venueItemDimensions, venueItemIcons } from '../venueItems';
 import styles from '../styles';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-
 interface FloorPlanCanvasProps {
   tables: TableItem[];
   onDragEnd: (id: string, x: number, y: number) => void;
@@ -19,26 +16,70 @@ interface FloorPlanCanvasProps {
 }
 
 export default function FloorPlanCanvas({ tables, onDragEnd, onSelect }: FloorPlanCanvasProps) {
+  const canvasPan = useRef(new Animated.ValueXY()).current;
+  const canvasZoom = useRef(new Animated.Value(1)).current;
+  const zoomRef = useRef(1);
+  const panOffset = useRef({ x: 0, y: 0 });
+  const gestureStart = useRef({ zoom: 1, panX: 0, panY: 0, distance: 0 });
+
+  const canvasResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponderCapture: event => event.nativeEvent.touches.length > 1,
+      onMoveShouldSetPanResponderCapture: event => event.nativeEvent.touches.length > 1,
+      onPanResponderGrant: event => {
+        const touches = event.nativeEvent.touches;
+        const distance = getTouchDistance(touches);
+        gestureStart.current = {
+          zoom: zoomRef.current,
+          panX: panOffset.current.x,
+          panY: panOffset.current.y,
+          distance
+        };
+      },
+      onPanResponderMove: (event, gesture) => {
+        const { zoom, panX, panY, distance } = gestureStart.current;
+        const currentDistance = getTouchDistance(event.nativeEvent.touches);
+        if (distance > 0 && currentDistance > 0) {
+          const nextZoom = Math.max(0.5, Math.min(3, zoom * currentDistance / distance));
+          zoomRef.current = nextZoom;
+          canvasZoom.setValue(nextZoom);
+        }
+        panOffset.current = { x: panX + gesture.dx, y: panY + gesture.dy };
+        canvasPan.setValue(panOffset.current);
+      }
+    })
+  ).current;
+
   return (
-    <View style={styles.canvasContainer}>
-      {tables.map(table => (
-        <DraggableTableNode
-          key={table.id}
-          table={table}
-          onDragEnd={(x, y) => onDragEnd(table.id, x, y)}
-          onPress={() => onSelect(table)}
-        />
-      ))}
+    <View style={styles.canvasContainer} {...canvasResponder.panHandlers}>
+      <Animated.View
+        style={[
+          styles.canvasScene,
+          { transform: [...canvasPan.getTranslateTransform(), { scale: canvasZoom }] }
+        ]}
+      >
+        {tables.map(table => (
+          <DraggableTableNode
+            key={table.id}
+            table={table}
+            zoomRef={zoomRef}
+            onDragEnd={(x, y) => onDragEnd(table.id, x, y)}
+            onPress={() => onSelect(table)}
+          />
+        ))}
+      </Animated.View>
     </View>
   );
 }
 
 function DraggableTableNode({
   table,
+  zoomRef,
   onDragEnd,
   onPress
 }: {
   table: TableItem;
+  zoomRef: React.MutableRefObject<number>;
   onDragEnd: (x: number, y: number) => void;
   onPress: () => void;
 }) {
@@ -63,11 +104,16 @@ function DraggableTableNode({
         });
         pan.setValue({ x: 0, y: 0 });
       },
-      onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], { useNativeDriver: false }),
+      onPanResponderMove: (_, gesture) => {
+        pan.setValue({
+          x: gesture.dx / zoomRef.current,
+          y: gesture.dy / zoomRef.current
+        });
+      },
       onPanResponderRelease: (_, gesture) => {
         pan.flattenOffset();
-        const finalX = Math.max(10, Math.min(SCREEN_WIDTH - 130, currentPos.current.x + gesture.dx));
-        const finalY = Math.max(10, Math.min(SCREEN_HEIGHT - 240, currentPos.current.y + gesture.dy));
+        const finalX = currentPos.current.x + gesture.dx / zoomRef.current;
+        const finalY = currentPos.current.y + gesture.dy / zoomRef.current;
         currentPos.current = { x: finalX, y: finalY };
         onDragEnd(finalX, finalY);
 
@@ -249,6 +295,12 @@ function DraggableTableNode({
       </View>
     </Animated.View>
   );
+}
+
+function getTouchDistance(touches: readonly { pageX: number; pageY: number }[]) {
+  if (touches.length < 2) return 0;
+  const [first, second] = touches;
+  return Math.hypot(second.pageX - first.pageX, second.pageY - first.pageY);
 }
 
 function getInitials(name?: string) {

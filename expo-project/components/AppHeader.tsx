@@ -18,11 +18,10 @@ export default function AppHeader({ onSave, onExport }: AppHeaderProps) {
       <View style={styles.headerActions}>
         <TouchableOpacity onPress={onSave} style={styles.btnSecondary} activeOpacity={0.7}>
           <Feather name="save" size={15} color="#0f172a" />
-          <Text style={styles.btnSecondaryText}>Save</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={onExport} style={styles.btnPrimary} activeOpacity={0.7}>
-          <Feather name="file-text" size={15} color="#ffffff" />
-          <Text style={styles.btnPrimaryText}>Export</Text>
+          <Feather name="share" size={15} color="#ffffff" />
+          <Text style={styles.btnPrimaryText}>PDF</Text>
         </TouchableOpacity>
       </View>
     </View>
