@@ -401,14 +401,37 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#51463c'
   },
-  tableNameInput: {
-    minWidth: 180,
+  tableNameLabel: {
+    color: '#84796d',
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.8,
+    marginBottom: 4
+  },
+  tableNameField: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    minWidth: 190,
     maxWidth: 260,
-    paddingVertical: 2,
+    paddingHorizontal: 9,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#cabb9f',
+    backgroundColor: '#f4edde'
+  },
+  tableNameInput: {
+    flex: 1,
+    minWidth: 150,
+    paddingVertical: 6,
     paddingHorizontal: 0,
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '800',
     color: '#51463c'
+  },
+  tableNameEditIcon: {
+    color: '#806c55',
+    fontSize: 17,
+    marginLeft: 8
   },
   modalSubtitle: {
     fontSize: 12,

@@ -61,14 +61,19 @@ export default function TableInspector({
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <View>
-              <TextInput
-                value={table?.name ?? ''}
-                onChangeText={name => onUpdateTable({ name })}
-                placeholder="Table name"
-                placeholderTextColor="#9a8d7c"
-                style={styles.tableNameInput}
-                accessibilityLabel="Table name"
-              />
+              <Text style={styles.tableNameLabel}>TABLE NAME · TAP TO EDIT</Text>
+              <View style={styles.tableNameField}>
+                <TextInput
+                  value={table?.name ?? ''}
+                  onChangeText={name => onUpdateTable({ name })}
+                  placeholder="Enter table name"
+                  placeholderTextColor="#9a8d7c"
+                  style={styles.tableNameInput}
+                  accessibilityLabel="Edit table name"
+                  returnKeyType="done"
+                />
+                <Text style={styles.tableNameEditIcon}>✎</Text>
+              </View>
               <Text style={styles.modalSubtitle}>
                 {table?.shape.toUpperCase()} · {table?.guests.length}/{table?.capacity} Seats
               </Text>
