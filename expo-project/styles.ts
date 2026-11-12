@@ -235,6 +235,84 @@ const styles = StyleSheet.create({
     padding: 20,
     maxHeight: '80%'
   },
+  settingsPage: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    padding: 20
+  },
+  settingsPageHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f5f9',
+    paddingBottom: 14,
+    marginBottom: 18
+  },
+  settingsSectionHeading: {
+    marginTop: 22
+  },
+  settingsPrimaryButton: {
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderRadius: 10,
+    backgroundColor: '#0f172a',
+    marginTop: 2
+  },
+  settingsPrimaryButtonText: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '700'
+  },
+  settingsEventRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 13,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    marginBottom: 8
+  },
+  settingsEventRowActive: {
+    backgroundColor: '#eff6ff',
+    borderColor: '#93c5fd'
+  },
+  settingsEventName: {
+    flex: 1,
+    color: '#0f172a',
+    fontSize: 13,
+    fontWeight: '700'
+  },
+  settingsEventState: {
+    color: '#2563eb',
+    fontSize: 12,
+    fontWeight: '700'
+  },
+  settingsActions: {
+    flexDirection: 'row',
+    gap: 10
+  },
+  settingsActionButton: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderRadius: 10,
+    backgroundColor: '#f1f5f9'
+  },
+  settingsActionText: {
+    color: '#0f172a',
+    fontSize: 13,
+    fontWeight: '700'
+  },
+  settingsHelpText: {
+    color: '#64748b',
+    fontSize: 12,
+    lineHeight: 18,
+    marginTop: 8,
+    marginBottom: 16
+  },
   venueEditor: {
     backgroundColor: '#ffffff',
     borderTopLeftRadius: 28,
