@@ -183,8 +183,8 @@ export default function TableInspector({
                   : 'bg-[#fcf9f2] border-[#d8cbb8] text-[#84796d] hover:bg-[#efe5d6]'
               }`}
             >
-              <Star className={`w-3.5 h-3.5 ${guestIsVip ? 'fill-[#705b3d]' : ''}`} />
-              <span>{guestIsVip ? '★ VIP guest' : '☆ Mark as VIP'}</span>
+              <Star className={`w-3.5 h-3.5 ${guestIsVip ? 'fill-[#705b3d] text-[#705b3d]' : 'text-[#84796d]'}`} />
+              <span>{guestIsVip ? 'VIP guest' : 'Mark as VIP'}</span>
             </button>
 
             <button
@@ -336,7 +336,7 @@ export default function TableInspector({
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#51463c] bg-[#efe5d6] hover:bg-[#e4d7c6] rounded-xl transition-all cursor-pointer"
               >
                 <RotateCw className="w-3.5 h-3.5" />
-                <span>↻ Rotate ({table.rotation ?? 0}°)</span>
+                <span>Rotate ({table.rotation ?? 0}°)</span>
               </button>
             </div>
           </div>

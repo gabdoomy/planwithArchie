@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import type { Guest, TableItem } from '../types/seating';
 import { venueItemColors, venueItemDimensions, venueItemIcons } from '../venueItems';
-import { ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import { ZoomIn, ZoomOut } from 'lucide-react';
 
 interface FloorPlanCanvasProps {
   tables: TableItem[];
@@ -28,8 +28,13 @@ export default function FloorPlanCanvas({
 
   // Handle Canvas background drag (pan)
   const handleCanvasPointerDown = (e: React.PointerEvent) => {
-    // Only start pan if clicking directly on the canvas background, not on a table
-    if ((e.target as HTMLElement).closest('.table-node-item')) return;
+    // Only start pan if clicking directly on the canvas background, not on a table or HUD controls
+    if (
+      (e.target as HTMLElement).closest('.table-node-item') ||
+      (e.target as HTMLElement).closest('.canvas-hud')
+    ) {
+      return;
+    }
 
     isPanningRef.current = true;
     panStartRef.current = {
@@ -66,13 +71,19 @@ export default function FloorPlanCanvas({
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
     const zoomFactor = e.deltaY < 0 ? 1.08 : 0.92;
-    setZoom(prev => Math.min(2.5, Math.max(0.4, prev * zoomFactor)));
+    setZoom(prev => Number(Math.min(2.5, Math.max(0.4, prev * zoomFactor)).toFixed(2)));
   };
 
-  // Reset zoom & pan to show content
-  const handleResetView = () => {
-    setZoom(1);
-    setPan({ x: 80, y: 60 });
+  const handleZoomIn = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setZoom(prev => Number(Math.min(2.5, prev + 0.15).toFixed(2)));
+  };
+
+  const handleZoomOut = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setZoom(prev => Number(Math.max(0.4, prev - 0.15).toFixed(2)));
   };
 
   return (
@@ -108,10 +119,18 @@ export default function FloorPlanCanvas({
         ))}
       </div>
 
-      {/* Canvas HUD Controls (Zoom In/Out, Reset) */}
-      <div className="absolute bottom-24 right-5 z-20 flex flex-col items-center gap-1.5 bg-[#fcf9f2] p-1.5 rounded-2xl shadow-lg border border-[#e5d9c8]/90">
+      {/* Canvas HUD Controls (Zoom In/Out) */}
+      <div
+        className="canvas-hud absolute bottom-24 right-5 z-20 flex flex-col items-center gap-1.5 bg-[#fcf9f2] p-1.5 rounded-2xl shadow-lg border border-[#e5d9c8]/90 select-none"
+        onPointerDown={e => e.stopPropagation()}
+        onPointerMove={e => e.stopPropagation()}
+        onPointerUp={e => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
+      >
         <button
-          onClick={() => setZoom(z => Math.min(2.5, z + 0.15))}
+          type="button"
+          onClick={handleZoomIn}
+          onPointerDown={handleZoomIn}
           title="Zoom In"
           className="w-8 h-8 flex items-center justify-center rounded-xl text-[#51463c] hover:bg-[#efe5d6] active:scale-95 transition-all cursor-pointer"
         >
@@ -121,19 +140,13 @@ export default function FloorPlanCanvas({
           {Math.round(zoom * 100)}%
         </span>
         <button
-          onClick={() => setZoom(z => Math.max(0.4, z - 0.15))}
+          type="button"
+          onClick={handleZoomOut}
+          onPointerDown={handleZoomOut}
           title="Zoom Out"
           className="w-8 h-8 flex items-center justify-center rounded-xl text-[#51463c] hover:bg-[#efe5d6] active:scale-95 transition-all cursor-pointer"
         >
           <ZoomOut className="w-4 h-4" />
-        </button>
-        <div className="w-5 h-px bg-[#e5d9c8] my-0.5" />
-        <button
-          onClick={handleResetView}
-          title="Reset View"
-          className="w-8 h-8 flex items-center justify-center rounded-xl text-[#51463c] hover:bg-[#efe5d6] active:scale-95 transition-all cursor-pointer"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
         </button>
       </div>
 
