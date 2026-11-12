@@ -14,8 +14,13 @@ export default function AppHeader({ title, onSave, onExport, onSettings }: AppHe
   return (
     <View style={styles.header}>
       <View style={styles.headerText}>
-        <Text style={styles.headerTitle} numberOfLines={1} ellipsizeMode="tail">{title}</Text>
-        <Text style={styles.headerSubtitle}>Wedding Seating Chart · by ArchieLabs</Text>
+        <View style={styles.headerTitleRow}>
+          <View style={styles.headerMark}>
+            <Feather name="heart" size={13} color="#766354" />
+          </View>
+          <Text style={styles.headerTitle} numberOfLines={1} ellipsizeMode="tail">{title}</Text>
+        </View>
+        <Text style={styles.headerSubtitle}>WEDDING SEATING PLAN</Text>
       </View>
       <View style={styles.headerActions}>
         <TouchableOpacity onPress={onSave} style={styles.btnSecondary} activeOpacity={0.7}>

@@ -187,6 +187,29 @@ export default function App() {
     setSettingsVisible(false);
   };
 
+  const deleteEvent = (id: string) => {
+    const event = eventPlans.find(item => item.id === id);
+    if (!event || eventPlans.length <= 1) return;
+
+    Alert.alert('Delete event?', `“${event.name}” and its seating plan will be permanently deleted.`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => {
+          const remainingEvents = eventPlans.filter(item => item.id !== id);
+          setEventPlans(remainingEvents);
+          if (id === activeEventId) {
+            setActiveEventId(remainingEvents[0].id);
+            setSelectedTable(null);
+            setSelectedVenueItem(null);
+            resetGuestForm();
+          }
+        }
+      }
+    ]);
+  };
+
   const exportEventJson = async () => {
     if (!activeEvent || !FileSystem.cacheDirectory) {
       Alert.alert('Export Failed', 'Could not access a temporary file location.');
@@ -395,6 +418,7 @@ export default function App() {
           onRename={renameEvent}
           onCreate={createEvent}
           onSwitch={switchEvent}
+          onDelete={deleteEvent}
           onExport={exportEventJson}
           onImport={importEventJson}
         />

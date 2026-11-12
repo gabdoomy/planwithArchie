@@ -61,7 +61,14 @@ export default function TableInspector({
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <View>
-              <Text style={styles.modalTitle}>{table?.name}</Text>
+              <TextInput
+                value={table?.name ?? ''}
+                onChangeText={name => onUpdateTable({ name })}
+                placeholder="Table name"
+                placeholderTextColor="#9a8d7c"
+                style={styles.tableNameInput}
+                accessibilityLabel="Table name"
+              />
               <Text style={styles.modalSubtitle}>
                 {table?.shape.toUpperCase()} · {table?.guests.length}/{table?.capacity} Seats
               </Text>

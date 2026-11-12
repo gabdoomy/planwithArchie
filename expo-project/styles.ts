@@ -20,7 +20,22 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     marginRight: 12
   },
+  headerTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8
+  },
+  headerMark: {
+    width: 25,
+    height: 25,
+    borderRadius: 13,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#eee1c9'
+  },
   headerTitle: {
+    flex: 1,
+    flexShrink: 1,
     fontSize: 18,
     fontWeight: '800',
     color: '#51463c',
@@ -30,7 +45,9 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#84796d',
     fontWeight: '500',
-    fontStyle: 'italic'
+    fontStyle: 'italic',
+    letterSpacing: 1.1,
+    marginTop: 3
   },
   headerActions: {
     flexDirection: 'row',
@@ -272,14 +289,33 @@ const styles = StyleSheet.create({
   },
   settingsEventRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 13,
+    paddingLeft: 12,
+    paddingRight: 8,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#e5d9c8',
     marginBottom: 8
+  },
+  settingsEventSelect: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 13,
+    paddingRight: 10
+  },
+  settingsEventDelete: {
+    paddingHorizontal: 8,
+    paddingVertical: 8
+  },
+  settingsEventDeleteText: {
+    color: '#a35f59',
+    fontSize: 12,
+    fontWeight: '700'
+  },
+  settingsEventDeleteDisabled: {
+    color: '#c9bdad'
   },
   settingsEventRowActive: {
     backgroundColor: '#f1e8d9',
@@ -361,6 +397,15 @@ const styles = StyleSheet.create({
     marginBottom: 14
   },
   modalTitle: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#51463c'
+  },
+  tableNameInput: {
+    minWidth: 180,
+    maxWidth: 260,
+    paddingVertical: 2,
+    paddingHorizontal: 0,
     fontSize: 17,
     fontWeight: '800',
     color: '#51463c'

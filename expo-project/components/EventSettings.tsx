@@ -21,6 +21,7 @@ interface EventSettingsProps {
   onRename: (name: string) => void;
   onCreate: (name: string) => void;
   onSwitch: (id: string) => void;
+  onDelete: (id: string) => void;
   onExport: () => void;
   onImport: () => void;
 }
@@ -32,6 +33,7 @@ export default function EventSettings({
   onRename,
   onCreate,
   onSwitch,
+  onDelete,
   onExport,
   onImport
 }: EventSettingsProps) {
@@ -91,21 +93,35 @@ export default function EventSettings({
 
         <Text style={[styles.sectionHeading, styles.settingsSectionHeading]}>Your events</Text>
         {events.map(event => (
-          <TouchableOpacity
+          <View
             key={event.id}
-            onPress={() => event.id !== currentEventId && onSwitch(event.id)}
             style={[
               styles.settingsEventRow,
               event.id === currentEventId && styles.settingsEventRowActive
             ]}
-            accessibilityRole="button"
-            accessibilityState={{ selected: event.id === currentEventId }}
           >
-            <Text style={styles.settingsEventName}>{event.name}</Text>
-            <Text style={styles.settingsEventState}>
-              {event.id === currentEventId ? 'Current' : 'Switch'}
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => event.id !== currentEventId && onSwitch(event.id)}
+              style={styles.settingsEventSelect}
+              accessibilityRole="button"
+              accessibilityState={{ selected: event.id === currentEventId }}
+            >
+              <Text style={styles.settingsEventName}>{event.name}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => onDelete(event.id)}
+              disabled={events.length <= 1}
+              style={styles.settingsEventDelete}
+              accessibilityRole="button"
+              accessibilityLabel={`Delete ${event.name}`}
+              accessibilityState={{ disabled: events.length <= 1 }}
+            >
+              <Text style={[
+                styles.settingsEventDeleteText,
+                events.length <= 1 && styles.settingsEventDeleteDisabled
+              ]}>Delete</Text>
+            </TouchableOpacity>
+          </View>
         ))}
 
         <Text style={[styles.sectionHeading, styles.settingsSectionHeading]}>Create an event</Text>
