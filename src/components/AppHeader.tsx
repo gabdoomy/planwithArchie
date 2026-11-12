@@ -55,21 +55,21 @@ export default function AppHeader({
           </button>
 
           <button
-            onClick={onSettings}
-            title="Manage Events & Seating Plans"
+            onClick={onExport}
+            title="Export Venue PDF Specification"
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#51463c] bg-[#efe5d6] hover:bg-[#e7dcce] rounded-xl transition-all shadow-2xs active:scale-97 cursor-pointer"
           >
-            <Settings className="w-3.5 h-3.5 text-[#766354]" />
-            <span className="hidden sm:inline">Settings</span>
+            <Share2 className="w-3.5 h-3.5 text-[#766354]" />
+            <span>PDF</span>
           </button>
 
           <button
-            onClick={onExport}
-            title="Export Venue PDF Specification"
+            onClick={onSettings}
+            title="Manage Events & Seating Plans"
             className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold text-[#fffaf2] bg-[#766354] hover:bg-[#685648] rounded-xl transition-all shadow-2xs active:scale-97 cursor-pointer"
           >
-            <Share2 className="w-3.5 h-3.5 text-[#fffaf2]" />
-            <span>PDF</span>
+            <Settings className="w-3.5 h-3.5 text-[#fffaf2]" />
+            <span className="hidden sm:inline">Settings</span>
           </button>
         </div>
       </div>
