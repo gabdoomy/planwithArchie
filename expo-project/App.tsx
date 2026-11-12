@@ -6,6 +6,7 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, SafeAreaView, StatusBar } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SplashScreen from 'expo-splash-screen';
 import AddItemsDock from './components/AddItemsDock';
 import AppHeader from './components/AppHeader';
 import EventSettings from './components/EventSettings';
@@ -24,6 +25,10 @@ import * as Sharing from 'expo-sharing';
 const STORAGE_KEY = '@planwitharchie_wedding_seating_v1';
 const EVENTS_STORAGE_KEY = '@planwitharchie_events_v1';
 const DEFAULT_EVENT_ID = 'default-event';
+
+void SplashScreen.preventAutoHideAsync().catch(error => {
+  console.warn('Could not keep the splash screen visible during startup:', error);
+});
 
 interface EventPlan extends EventSummary {
   tables: TableItem[];
@@ -148,6 +153,13 @@ export default function App() {
     AsyncStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify({ events: eventPlans, activeEventId }))
       .catch(() => Alert.alert('Save Failed', 'Could not save your events to local storage.'));
   }, [eventPlans, activeEventId, storageLoaded]);
+
+  useEffect(() => {
+    if (!storageLoaded) return;
+    SplashScreen.hideAsync().catch(error => {
+      console.warn('Could not hide the splash screen after startup:', error);
+    });
+  }, [storageLoaded]);
 
   const saveToLocalStorage = async () => {
     try {

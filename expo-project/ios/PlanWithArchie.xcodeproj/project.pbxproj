@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09AED7BB99770A2DA1DD2A17 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C42BD4682A8AAAAA48D998D4 /* ExpoModulesProvider.swift */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		235AE66D0D9E261FBE3ABEFC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5F6B1B95EBDC99CE8EB16915 /* PrivacyInfo.xcprivacy */; };
+		387199B23F83CE517DE2A0BA /* libPods-PlanWithArchie.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F040B11AACD423DE19FD7ADA /* libPods-PlanWithArchie.a */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		44C6C0B0B4F20F11BE3D848B /* libPods-PlanWithArchie.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E46CEAAD15B09B8C0A7BE72A /* libPods-PlanWithArchie.a */; };
-		7795BDA08B138322F0896631 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6902E789E07B73014A0A1945 /* ExpoModulesProvider.swift */; };
-		B97300936CC9430255BAA719 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D998EE703A9A17433C96DF2A /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 		F11748442D0307B40044C1D9 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748432D0307B40044C1D9 /* SceneDelegate.swift */; };
@@ -21,17 +21,17 @@
 		13B07F961A680F5B00A75B9A /* PlanWithArchie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PlanWithArchie.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = PlanWithArchie/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = PlanWithArchie/Info.plist; sourceTree = "<group>"; };
-		2D2AC18F5C817FC44B937DE6 /* Pods-PlanWithArchie.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PlanWithArchie.debug.xcconfig"; path = "Target Support Files/Pods-PlanWithArchie/Pods-PlanWithArchie.debug.xcconfig"; sourceTree = "<group>"; };
-		6902E789E07B73014A0A1945 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-PlanWithArchie/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		6EDCDFA99ED5196124298E21 /* Pods-PlanWithArchie.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PlanWithArchie.release.xcconfig"; path = "Target Support Files/Pods-PlanWithArchie/Pods-PlanWithArchie.release.xcconfig"; sourceTree = "<group>"; };
+		22F10D45CE4CC9E5E71DA6EA /* Pods-PlanWithArchie.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PlanWithArchie.debug.xcconfig"; path = "Target Support Files/Pods-PlanWithArchie/Pods-PlanWithArchie.debug.xcconfig"; sourceTree = "<group>"; };
+		5F6B1B95EBDC99CE8EB16915 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = PlanWithArchie/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = PlanWithArchie/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		D998EE703A9A17433C96DF2A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = PlanWithArchie/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		E46CEAAD15B09B8C0A7BE72A /* libPods-PlanWithArchie.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PlanWithArchie.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C42BD4682A8AAAAA48D998D4 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-PlanWithArchie/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F040B11AACD423DE19FD7ADA /* libPods-PlanWithArchie.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PlanWithArchie.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = PlanWithArchie/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748432D0307B40044C1D9 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneDelegate.swift; path = PlanWithArchie/SceneDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* PlanWithArchie-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "PlanWithArchie-Bridging-Header.h"; path = "PlanWithArchie/PlanWithArchie-Bridging-Header.h"; sourceTree = "<group>"; };
+		FBC8A7CC0124FA40B5E91786 /* Pods-PlanWithArchie.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PlanWithArchie.release.xcconfig"; path = "Target Support Files/Pods-PlanWithArchie/Pods-PlanWithArchie.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,7 +39,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				44C6C0B0B4F20F11BE3D848B /* libPods-PlanWithArchie.a in Frameworks */,
+				387199B23F83CE517DE2A0BA /* libPods-PlanWithArchie.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,35 +56,27 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				D998EE703A9A17433C96DF2A /* PrivacyInfo.xcprivacy */,
+				5F6B1B95EBDC99CE8EB16915 /* PrivacyInfo.xcprivacy */,
 			);
 			name = PlanWithArchie;
+			sourceTree = "<group>";
+		};
+		1F0DF1DF59A9FF8BFFFBA25C /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				22F10D45CE4CC9E5E71DA6EA /* Pods-PlanWithArchie.debug.xcconfig */,
+				FBC8A7CC0124FA40B5E91786 /* Pods-PlanWithArchie.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				E46CEAAD15B09B8C0A7BE72A /* libPods-PlanWithArchie.a */,
+				F040B11AACD423DE19FD7ADA /* libPods-PlanWithArchie.a */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		6AA30AA4874EE3C464EBDF33 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				2D2AC18F5C817FC44B937DE6 /* Pods-PlanWithArchie.debug.xcconfig */,
-				6EDCDFA99ED5196124298E21 /* Pods-PlanWithArchie.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
-		7517647B6FCA6E4B936A2559 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				B93C12D8F730EC7E843539D6 /* PlanWithArchie */,
-			);
-			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -101,8 +93,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				6AA30AA4874EE3C464EBDF33 /* Pods */,
-				7517647B6FCA6E4B936A2559 /* ExpoModulesProviders */,
+				1F0DF1DF59A9FF8BFFFBA25C /* Pods */,
+				9F03083EB36C9615B3D70730 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -117,12 +109,12 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B93C12D8F730EC7E843539D6 /* PlanWithArchie */ = {
+		9F03083EB36C9615B3D70730 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				6902E789E07B73014A0A1945 /* ExpoModulesProvider.swift */,
+				DD64B308CE071E629C9241F5 /* PlanWithArchie */,
 			);
-			name = PlanWithArchie;
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
@@ -134,6 +126,14 @@
 			path = PlanWithArchie/Supporting;
 			sourceTree = "<group>";
 		};
+		DD64B308CE071E629C9241F5 /* PlanWithArchie */ = {
+			isa = PBXGroup;
+			children = (
+				C42BD4682A8AAAAA48D998D4 /* ExpoModulesProvider.swift */,
+			);
+			name = PlanWithArchie;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -142,13 +142,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "PlanWithArchie" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				EF1AEF1C72DBB5B2EC070F78 /* [Expo] Configure project */,
+				9F64FE4EE1DD8175904B7E44 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				A7897F4787B6AF40C2BE6595 /* [CP] Embed Pods Frameworks */,
+				7B44431F647C5087219DD040 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -198,7 +198,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				B97300936CC9430255BAA719 /* PrivacyInfo.xcprivacy in Resources */,
+				235AE66D0D9E261FBE3ABEFC /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,35 +244,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-PlanWithArchie/Pods-PlanWithArchie-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/RNCAsyncStorage/RNCAsyncStorage_resources.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-timing/React-timing_privacy.bundle",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoConstants_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoFileSystem_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNCAsyncStorage_resources.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-timing_privacy.bundle",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PlanWithArchie/Pods-PlanWithArchie-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A7897F4787B6AF40C2BE6595 /* [CP] Embed Pods Frameworks */ = {
+		7B44431F647C5087219DD040 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -304,7 +276,35 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PlanWithArchie/Pods-PlanWithArchie-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		EF1AEF1C72DBB5B2EC070F78 /* [Expo] Configure project */ = {
+		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PlanWithArchie/Pods-PlanWithArchie-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/RNCAsyncStorage/RNCAsyncStorage_resources.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-timing/React-timing_privacy.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoConstants_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoFileSystem_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNCAsyncStorage_resources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-timing_privacy.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PlanWithArchie/Pods-PlanWithArchie-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9F64FE4EE1DD8175904B7E44 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -337,7 +337,7 @@
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
 				F11748442D0307B40044C1D9 /* SceneDelegate.swift in Sources */,
-				7795BDA08B138322F0896631 /* ExpoModulesProvider.swift in Sources */,
+				09AED7BB99770A2DA1DD2A17 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -346,7 +346,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2D2AC18F5C817FC44B937DE6 /* Pods-PlanWithArchie.debug.xcconfig */;
+			baseConfigurationReference = 22F10D45CE4CC9E5E71DA6EA /* Pods-PlanWithArchie.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -384,7 +384,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6EDCDFA99ED5196124298E21 /* Pods-PlanWithArchie.release.xcconfig */;
+			baseConfigurationReference = FBC8A7CC0124FA40B5E91786 /* Pods-PlanWithArchie.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

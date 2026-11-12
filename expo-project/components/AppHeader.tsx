@@ -20,7 +20,7 @@ export default function AppHeader({ title, onSave, onExport, onSettings }: AppHe
           </View>
           <Text style={styles.headerTitle} numberOfLines={1} ellipsizeMode="tail">{title}</Text>
         </View>
-        <Text style={styles.headerSubtitle}>WEDDING SEATING PLAN</Text>
+        <Text style={styles.headerSubtitle}>Wedding Seating Chart · by ArchieLabs</Text>
       </View>
       <View style={styles.headerActions}>
         <TouchableOpacity onPress={onSave} style={styles.btnSecondary} activeOpacity={0.7}>

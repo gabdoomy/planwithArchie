@@ -1,11 +1,11 @@
 {
-  "name": "Plan With Archie",
+  "name": "PlanWithArchie",
   "slug": "plan-with-archie",
   "icon": "./assets/icon.png",
   "splash": {
     "image": "./assets/splash.png",
     "resizeMode": "contain",
-    "backgroundColor": "#F7F4EC"
+    "backgroundColor": "#FBF7EF"
   },
   "ios": {
     "icon": "./assets/icon.png",

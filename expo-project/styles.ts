@@ -46,7 +46,6 @@ const styles = StyleSheet.create({
     color: '#84796d',
     fontWeight: '500',
     fontStyle: 'italic',
-    letterSpacing: 1.1,
     marginTop: 3
   },
   headerActions: {
