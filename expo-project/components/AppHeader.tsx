@@ -13,19 +13,19 @@ interface AppHeaderProps {
 export default function AppHeader({ title, onSave, onExport, onSettings }: AppHeaderProps) {
   return (
     <View style={styles.header}>
-      <View>
-        <Text style={styles.headerTitle} numberOfLines={1}>{title}</Text>
+      <View style={styles.headerText}>
+        <Text style={styles.headerTitle} numberOfLines={1} ellipsizeMode="tail">{title}</Text>
         <Text style={styles.headerSubtitle}>Wedding Seating Chart · by ArchieLabs</Text>
       </View>
       <View style={styles.headerActions}>
         <TouchableOpacity onPress={onSave} style={styles.btnSecondary} activeOpacity={0.7}>
-          <Feather name="save" size={15} color="#0f172a" />
+          <Feather name="save" size={15} color="#766354" />
         </TouchableOpacity>
         <TouchableOpacity onPress={onSettings} style={styles.btnSecondary} activeOpacity={0.7}>
-          <Feather name="settings" size={15} color="#0f172a" />
+          <Feather name="settings" size={15} color="#766354" />
         </TouchableOpacity>
         <TouchableOpacity onPress={onExport} style={styles.btnPrimary} activeOpacity={0.7}>
-          <Feather name="share" size={15} color="#ffffff" />
+          <Feather name="share" size={15} color="#fffaf2" />
           <Text style={styles.btnPrimaryText}>PDF</Text>
         </TouchableOpacity>
       </View>

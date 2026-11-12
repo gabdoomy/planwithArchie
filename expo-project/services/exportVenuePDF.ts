@@ -55,8 +55,8 @@ export async function exportVenuePDF(tables: TableItem[]) {
           const dash = table.venueType === 'dancefloor' ? ' stroke-dasharray="5 3"' : '';
           return `<g transform="translate(${table.x + width / 2} ${table.y + height / 2}) rotate(${table.rotation ?? 0})">
             <rect x="${-width / 2}" y="${-height / 2}" width="${width}" height="${height}" rx="10" fill="${fill}" fill-opacity="0.2" stroke="${fill}" stroke-width="2"${dash}/>
-            <text x="0" y="-2" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">${escapeHtml(venueItemIcons[table.venueType])} ${escapeHtml(label)}</text>
-            <text x="0" y="13" text-anchor="middle" font-size="8" fill="#475569">Venue area</text>
+            <text x="0" y="-2" text-anchor="middle" font-size="12" font-weight="700" fill="#51463c">${escapeHtml(venueItemIcons[table.venueType])} ${escapeHtml(label)}</text>
+            <text x="0" y="13" text-anchor="middle" font-size="8" fill="#817260">Venue area</text>
           </g>`;
         }
         const seats: { x: number; y: number; guest?: Guest; seatNum: number }[] = [];
@@ -117,11 +117,11 @@ export async function exportVenuePDF(tables: TableItem[]) {
 
         const chairs = seats.map(seat => {
           const guest = seat.guest;
-          const fill = guest ? guest.isVip ? '#fef3c7' : '#0f172a' : '#ffffff';
-          const stroke = guest?.isVip ? '#d97706' : guest ? '#0f172a' : '#cbd5e1';
+          const fill = guest ? guest.isVip ? '#eee1c9' : '#766354' : '#fcf9f2';
+          const stroke = guest?.isVip ? '#ad9166' : guest ? '#766354' : '#d8cbb8';
           const text = guest ? guest.name.trim().split(/\s+/).filter(Boolean)
             .map(part => part[0]).slice(0, 2).join('').toUpperCase() : String(seat.seatNum);
-          return `<g><rect x="${seat.x}" y="${seat.y}" width="${chairSize}" height="${chairSize}" rx="${chairSize / 2}" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/><text x="${seat.x + chairSize / 2}" y="${seat.y + chairSize / 2 + 3}" text-anchor="middle" font-size="7" font-weight="700" fill="${guest?.isVip ? '#92400e' : guest ? '#ffffff' : '#64748b'}">${escapeHtml(text)}</text></g>`;
+          return `<g><rect x="${seat.x}" y="${seat.y}" width="${chairSize}" height="${chairSize}" rx="${chairSize / 2}" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/><text x="${seat.x + chairSize / 2}" y="${seat.y + chairSize / 2 + 3}" text-anchor="middle" font-size="7" font-weight="700" fill="${guest?.isVip ? '#705b3d' : guest ? '#fffaf2' : '#84796d'}">${escapeHtml(text)}</text></g>`;
         }).join('');
         const surface = table.shape === 'round'
           ? `<circle cx="${width / 2}" cy="${height / 2}" r="${width / 2}" />`
@@ -138,31 +138,31 @@ export async function exportVenuePDF(tables: TableItem[]) {
         <head>
           <meta charset="utf-8" />
           <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; padding: 40px; color: #0f172a; }
-            .header { border-bottom: 2px solid #0f172a; padding-bottom: 16px; margin-bottom: 24px; }
+            body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; padding: 40px; color: #51463c; }
+            .header { border-bottom: 2px solid #b8a48c; padding-bottom: 16px; margin-bottom: 24px; }
             h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin: 0 0 6px 0; }
-            .subtitle { font-size: 13px; color: #64748b; font-weight: 500; }
-            .metrics { display: flex; gap: 24px; background: #f8fafc; padding: 14px 20px; border-radius: 8px; margin-bottom: 24px; }
+            .subtitle { font-size: 13px; color: #84796d; font-weight: 500; }
+            .metrics { display: flex; gap: 24px; background: #f4edde; padding: 14px 20px; border-radius: 8px; margin-bottom: 24px; }
             .metric-box { flex: 1; }
-            .metric-label { font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase; }
-            .metric-value { font-size: 16px; font-weight: bold; color: #0f172a; }
+            .metric-label { font-size: 10px; font-weight: bold; color: #84796d; text-transform: uppercase; }
+            .metric-value { font-size: 16px; font-weight: bold; color: #51463c; }
             .table-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-            .table-card { border: 1px solid #cbd5e1; border-radius: 10px; padding: 16px; background: #ffffff; page-break-inside: avoid; }
-            .table-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; margin-bottom: 10px; }
+            .table-card { border: 1px solid #e5d9c8; border-radius: 10px; padding: 16px; background: #fcf9f2; page-break-inside: avoid; }
+            .table-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e9dfd0; padding-bottom: 8px; margin-bottom: 10px; }
             .table-name { font-weight: bold; font-size: 15px; }
-            .table-shape { font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; }
-            .guest-row { display: flex; justify-content: space-between; font-size: 12px; padding: 5px 0; border-bottom: 1px dashed #f1f5f9; }
-            .vip-tag { font-size: 9px; font-weight: bold; background: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 4px; margin-left: 6px; }
-            .diet-tag { font-size: 10px; font-weight: bold; color: #dc2626; }
-            .footer { margin-top: 40px; font-size: 11px; color: #94a3b8; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 16px; }
+            .table-shape { font-size: 11px; color: #84796d; text-transform: uppercase; font-weight: 600; }
+            .guest-row { display: flex; justify-content: space-between; font-size: 12px; padding: 5px 0; border-bottom: 1px dashed #e9dfd0; }
+            .vip-tag { font-size: 9px; font-weight: bold; background: #eee1c9; color: #705b3d; padding: 2px 6px; border-radius: 4px; margin-left: 6px; }
+            .diet-tag { font-size: 10px; font-weight: bold; color: #a35f59; }
+            .footer { margin-top: 40px; font-size: 11px; color: #9a8d7c; text-align: center; border-top: 1px solid #e5d9c8; padding-top: 16px; }
             .floor-plan { page-break-before: always; break-before: page; page-break-inside: avoid; }
             .floor-plan h2 { font-size: 20px; margin: 0 0 6px; }
-            .floor-plan-note { color: #64748b; font-size: 11px; margin-bottom: 12px; }
-            .floor-plan svg { display: block; width: 100%; height: 6.4in; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; }
-            .table-surface rect, .table-surface circle { fill: #ffffff; stroke: #0f172a; stroke-width: 2; }
-            .table-name { fill: #0f172a; font-size: 12px; font-weight: 700; }
-            .table-count { fill: #64748b; font-size: 9px; font-weight: 600; }
-            .plan-legend { display: flex; gap: 18px; font-size: 10px; color: #475569; margin-top: 10px; }
+            .floor-plan-note { color: #84796d; font-size: 11px; margin-bottom: 12px; }
+            .floor-plan svg { display: block; width: 100%; height: 6.4in; border: 1px solid #e5d9c8; border-radius: 8px; background: #f4edde; }
+            .table-surface rect, .table-surface circle { fill: #fcf9f2; stroke: #b8a48c; stroke-width: 2; }
+            .table-name { fill: #51463c; font-size: 12px; font-weight: 700; }
+            .table-count { fill: #84796d; font-size: 9px; font-weight: 600; }
+            .plan-legend { display: flex; gap: 18px; font-size: 10px; color: #817260; margin-top: 10px; }
             .legend-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
           </style>
         </head>
@@ -194,7 +194,7 @@ export async function exportVenuePDF(tables: TableItem[]) {
                   <span class="table-name">Table ${idx + 1}: ${escapeHtml(t.name)}</span>
                   <span class="table-shape">${t.shape} · ${t.guests.length}/${t.capacity}</span>
                 </div>
-                ${t.guests.length === 0 ? '<div style="font-size: 12px; color: #94a3b8; font-style: italic;">No guests seated yet</div>' : ''}
+                ${t.guests.length === 0 ? '<div style="font-size: 12px; color: #9a8d7c; font-style: italic;">No guests seated yet</div>' : ''}
                 ${t.guests.map((g, sIdx) => `
                   <div class="guest-row">
                     <span>
@@ -215,9 +215,9 @@ export async function exportVenuePDF(tables: TableItem[]) {
               ${floorPlanSvg}
             </svg>
             <div class="plan-legend">
-              <span><span class="legend-dot" style="background:#fff;border:1px solid #cbd5e1"></span>Open seat</span>
-              <span><span class="legend-dot" style="background:#0f172a"></span>Guest</span>
-              <span><span class="legend-dot" style="background:#fef3c7;border:1px solid #d97706"></span>VIP</span>
+              <span><span class="legend-dot" style="background:#fcf9f2;border:1px solid #d8cbb8"></span>Open seat</span>
+              <span><span class="legend-dot" style="background:#766354"></span>Guest</span>
+              <span><span class="legend-dot" style="background:#eee1c9;border:1px solid #ad9166"></span>VIP</span>
             </div>
           </section>
 

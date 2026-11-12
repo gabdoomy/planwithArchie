@@ -17,11 +17,11 @@ export const venueItemIcons: Record<VenueItemType, string> = {
 };
 
 export const venueItemColors: Record<VenueItemType, string> = {
-  dj: '#7c3aed',
-  bar: '#0891b2',
-  dancefloor: '#db2777',
-  cakebar: '#d97706',
-  other: '#475569'
+  dj: '#a28f9d',
+  bar: '#8b9b8a',
+  dancefloor: '#b48b82',
+  cakebar: '#ad9166',
+  other: '#8b8172'
 };
 
 export const venueItemDimensions: Record<VenueItemType, { width: number; height: number }> = {

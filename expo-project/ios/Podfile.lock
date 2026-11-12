@@ -34,6 +34,8 @@ PODS:
     - Yoga
   - ExpoAsset (58.0.21):
     - ExpoModulesCore
+  - ExpoDocumentPicker (58.0.5):
+    - ExpoModulesCore
   - ExpoDomWebView (58.0.2):
     - ExpoModulesCore
   - ExpoFileSystem (58.0.13):
@@ -1972,8 +1974,9 @@ DEPENDENCIES:
   - EXConstants (from `../node_modules/expo/node_modules/expo-constants/ios`)
   - Expo (from `../node_modules/expo`)
   - ExpoAsset (from `../node_modules/expo/node_modules/expo-asset/ios`)
+  - ExpoDocumentPicker (from `../node_modules/expo-document-picker/ios`)
   - "ExpoDomWebView (from `../node_modules/expo/node_modules/@expo/dom-webview/ios`)"
-  - ExpoFileSystem (from `../node_modules/expo/node_modules/expo-file-system/ios/ExpoFileSystem.podspec`)
+  - ExpoFileSystem (from `../node_modules/expo-file-system/ios/ExpoFileSystem.podspec`)
   - ExpoFont (from `../node_modules/expo-font/ios/ExpoFont.podspec`)
   - ExpoKeepAwake (from `../node_modules/expo/node_modules/expo-keep-awake/ios`)
   - "ExpoLogBox (from `../node_modules/expo/node_modules/@expo/log-box`)"
@@ -2082,10 +2085,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo"
   ExpoAsset:
     :path: "../node_modules/expo/node_modules/expo-asset/ios"
+  ExpoDocumentPicker:
+    :path: "../node_modules/expo-document-picker/ios"
   ExpoDomWebView:
     :path: "../node_modules/expo/node_modules/@expo/dom-webview/ios"
   ExpoFileSystem:
-    :podspec: "../node_modules/expo/node_modules/expo-file-system/ios/ExpoFileSystem.podspec"
+    :podspec: "../node_modules/expo-file-system/ios/ExpoFileSystem.podspec"
   ExpoFont:
     :podspec: "../node_modules/expo-font/ios/ExpoFont.podspec"
   ExpoKeepAwake:
@@ -2284,6 +2289,7 @@ SPEC CHECKSUMS:
   EXConstants: aeda76f4be923fc719522ae162dd0b8c6483f9cc
   Expo: c9c0816dfb08ecb3f0a23fc3ff548708e899ccdc
   ExpoAsset: eda9e4844b55b78d4e71a0e2de767a038f3a0806
+  ExpoDocumentPicker: 3e8fdb323db3ad2f7c8bbd21fdad3b982f1cf178
   ExpoDomWebView: b2a6d681b9d34c23b1f584321386ca8da1d36afb
   ExpoFileSystem: b619d80b490c53117a9a9c976021a4ce5a9da440
   ExpoFont: daea737a2e3742f9a946f2884518e70dd37011f3

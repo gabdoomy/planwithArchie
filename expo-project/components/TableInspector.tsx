@@ -108,14 +108,14 @@ export default function TableInspector({
               </Text>
               <TextInput
                 placeholder="Guest Full Name..."
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor="#9a8d7c"
                 value={guestName}
                 onChangeText={onGuestNameChange}
                 style={styles.input}
               />
               <TextInput
                 placeholder="Dietary Note (e.g. Vegetarian, Gluten-Free)"
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor="#9a8d7c"
                 value={guestDiet}
                 onChangeText={onGuestDietChange}
                 style={styles.input}
