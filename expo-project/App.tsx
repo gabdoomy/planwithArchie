@@ -444,7 +444,7 @@ export default function App() {
       <AppHeader
         title={activeEvent?.name ?? 'Plan With Archie'}
         onSave={saveToLocalStorage}
-        onExport={() => exportVenuePDF(tables)}
+        onExport={() => exportVenuePDF(tables, activeEvent?.name ?? 'Plan With Archie')}
         onSettings={() => setSettingsVisible(true)}
       />
       <FloorPlanCanvas

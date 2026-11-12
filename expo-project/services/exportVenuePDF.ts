@@ -1,12 +1,13 @@
 import { Alert, Dimensions } from 'react-native';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system/legacy';
 import type { Guest, TableItem } from '../types';
 import { venueItemColors, venueItemDimensions, venueItemIcons, venueItemLabels } from '../venueItems';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-export async function exportVenuePDF(tables: TableItem[]) {
+export async function exportVenuePDF(tables: TableItem[], eventName: string) {
     try {
       const totalGuests = tables.reduce((acc, t) => acc + t.guests.length, 0);
       const seatingTables = tables.filter(table => !table.venueType);
@@ -238,10 +239,14 @@ export async function exportVenuePDF(tables: TableItem[]) {
       `;
 
       const { uri } = await Print.printToFileAsync({ html: htmlContent });
+      const eventSlug = eventName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'event';
+      const shortHash = Math.random().toString(36).slice(2, 8).padEnd(6, '0');
+      const namedUri = `${uri.slice(0, uri.lastIndexOf('/') + 1)}${eventSlug}-${shortHash}.pdf`;
+      await FileSystem.moveAsync({ from: uri, to: namedUri });
       if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
+        await Sharing.shareAsync(namedUri, { UTI: '.pdf', mimeType: 'application/pdf' });
       } else {
-        Alert.alert('PDF Created', `Saved to ${uri}`);
+        Alert.alert('PDF Created', `Saved to ${namedUri}`);
       }
     } catch (e: any) {
       Alert.alert('PDF Export Failed', e.message || 'Error printing PDF');
