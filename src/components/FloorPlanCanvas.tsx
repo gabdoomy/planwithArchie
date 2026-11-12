@@ -119,9 +119,9 @@ export default function FloorPlanCanvas({
         ))}
       </div>
 
-      {/* Canvas HUD Controls (Zoom In/Out) */}
+      {/* Canvas HUD Controls (Zoom In/Out) - Top Right */}
       <div
-        className="canvas-hud absolute bottom-24 right-5 z-20 flex flex-col items-center gap-1.5 bg-[#fcf9f2] p-1.5 rounded-2xl shadow-lg border border-[#e5d9c8]/90 select-none"
+        className="canvas-hud absolute top-4 right-4 z-20 flex flex-col items-center gap-1.5 bg-[#fcf9f2]/95 backdrop-blur-md p-1.5 rounded-2xl shadow-lg border border-[#e5d9c8]/90 select-none"
         onPointerDown={e => e.stopPropagation()}
         onPointerMove={e => e.stopPropagation()}
         onPointerUp={e => e.stopPropagation()}
@@ -150,8 +150,8 @@ export default function FloorPlanCanvas({
         </button>
       </div>
 
-      {/* Canvas Legend */}
-      <div className="absolute top-4 left-5 z-10 hidden sm:flex items-center gap-4 bg-[#fcf9f2]/90 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-[#e5d9c8]/80 text-[11px] font-medium text-[#766354] shadow-2xs pointer-events-none">
+      {/* Canvas Legend - Bottom Left */}
+      <div className="absolute bottom-4 left-4 z-10 hidden md:flex items-center gap-4 bg-[#fcf9f2]/90 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-[#e5d9c8]/80 text-[11px] font-medium text-[#766354] shadow-2xs pointer-events-none">
         <div className="flex items-center gap-1.5">
           <span className="w-3.5 h-3.5 rounded-full bg-[#fcf9f2] border border-[#d8cbb8] flex items-center justify-center text-[8px] text-[#84796d]">1</span>
           <span>Open seat</span>
