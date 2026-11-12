@@ -26,13 +26,13 @@ export default function AppHeader({ title, onSave, onExport, onSettings }: AppHe
         <TouchableOpacity onPress={onSave} style={styles.btnSecondary} activeOpacity={0.7}>
           <Feather name="save" size={15} color="#766354" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={onSettings} style={styles.btnSecondary} activeOpacity={0.7}>
-          <Feather name="settings" size={15} color="#766354" />
+        <TouchableOpacity onPress={onExport} style={styles.btnSecondary} activeOpacity={0.7}>
+          <Feather name="download" size={15} color="#766354" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={onExport} style={styles.btnPrimary} activeOpacity={0.7}>
-          <Feather name="share" size={15} color="#fffaf2" />
-          <Text style={styles.btnPrimaryText}>PDF</Text>
+        <TouchableOpacity onPress={onSettings} style={styles.btnPrimary} activeOpacity={0.7}>
+          <Feather name="settings" size={15} color="#fffaf2" />
         </TouchableOpacity>
+      
       </View>
     </View>
   );
