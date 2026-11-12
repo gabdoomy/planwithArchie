@@ -127,8 +127,9 @@ export async function exportVenuePDF(tables: TableItem[]) {
           ? `<circle cx="${width / 2}" cy="${height / 2}" r="${width / 2}" />`
           : `<rect x="0" y="0" width="${width}" height="${height}" rx="10" />`;
         return `<g transform="translate(${table.x + width / 2} ${table.y + height / 2}) rotate(${table.rotation ?? 0}) translate(${-width / 2} ${-height / 2})">
+          <g class="table-surface">${surface}</g>
           ${chairs}
-          <g class="table-surface">${surface}<text class="table-name" x="${width / 2}" y="${height / 2 - 3}" text-anchor="middle">${escapeHtml(table.name)}</text><text class="table-count" x="${width / 2}" y="${height / 2 + 12}" text-anchor="middle">${table.guests.length} / ${table.capacity} seats</text></g>
+          <g><text class="floor-table-name" x="${width / 2}" y="${height / 2 - 3}" text-anchor="middle">${escapeHtml(table.name)}</text><text class="table-count" x="${width / 2}" y="${height / 2 + 12}" text-anchor="middle">${table.guests.length} / ${table.capacity} seats</text></g>
         </g>`;
       }).join('');
 
@@ -160,10 +161,14 @@ export async function exportVenuePDF(tables: TableItem[]) {
             .floor-plan-note { color: #84796d; font-size: 11px; margin-bottom: 12px; }
             .floor-plan svg { display: block; width: 100%; height: 6.4in; border: 1px solid #e5d9c8; border-radius: 8px; background: #f4edde; }
             .table-surface rect, .table-surface circle { fill: #fcf9f2; stroke: #b8a48c; stroke-width: 2; }
-            .table-name { fill: #51463c; font-size: 12px; font-weight: 700; }
+            .floor-table-name { fill: #51463c; font-size: 12px; font-weight: 700; }
             .table-count { fill: #84796d; font-size: 9px; font-weight: 600; }
             .plan-legend { display: flex; gap: 18px; font-size: 10px; color: #817260; margin-top: 10px; }
-            .legend-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+            .legend-item { display: inline-flex; align-items: center; gap: 5px; }
+            .legend-marker { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; box-sizing: border-box; font-size: 9px; font-weight: 700; }
+            .legend-open { background: #fcf9f2; border: 1.5px solid #d8cbb8; }
+            .legend-guest { background: #766354; border: 1.5px solid #766354; color: #fffaf2; }
+            .legend-vip { background: #ad9166; border: 1.5px solid #ad9166; color: #705b3d; }
           </style>
         </head>
         <body>
@@ -215,9 +220,9 @@ export async function exportVenuePDF(tables: TableItem[]) {
               ${floorPlanSvg}
             </svg>
             <div class="plan-legend">
-              <span><span class="legend-dot" style="background:#fcf9f2;border:1px solid #d8cbb8"></span>Open seat</span>
-              <span><span class="legend-dot" style="background:#766354"></span>Guest</span>
-              <span><span class="legend-dot" style="background:#eee1c9;border:1px solid #ad9166"></span>VIP</span>
+              <span class="legend-item"><span class="legend-marker legend-open"></span>Open seat</span>
+              <span class="legend-item"><span class="legend-marker legend-guest">G</span>Guest</span>
+              <span class="legend-item"><span class="legend-marker legend-vip">★</span>VIP</span>
             </div>
           </section>
 
