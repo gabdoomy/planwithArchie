@@ -156,8 +156,10 @@ export async function exportVenuePDF(tables: TableItem[]) {
             .vip-tag { font-size: 9px; font-weight: bold; background: #eee1c9; color: #705b3d; padding: 2px 6px; border-radius: 4px; margin-left: 6px; }
             .diet-tag { font-size: 10px; font-weight: bold; color: #a35f59; }
             .footer { margin-top: 40px; font-size: 11px; color: #9a8d7c; text-align: center; border-top: 1px solid #e5d9c8; padding-top: 16px; }
-            .floor-plan { page-break-before: always; break-before: page; page-break-inside: avoid; }
-            .floor-plan h2 { font-size: 20px; margin: 0 0 6px; }
+            .floor-plan { page-break-before: always; break-before: page; page-break-inside: avoid; padding-top: 20px; }
+            .floor-plan-heading { border-bottom: 1px solid #d8cbb8; padding-bottom: 12px; margin-bottom: 12px; }
+            .floor-plan-kicker { color: #8b8172; font-size: 10px; font-weight: 700; letter-spacing: 2px; margin-bottom: 5px; }
+            .floor-plan h2 { color: #51463c; font-size: 28px; line-height: 1.15; margin: 0; }
             .floor-plan-note { color: #84796d; font-size: 11px; margin-bottom: 12px; }
             .floor-plan svg { display: block; width: 100%; height: 6.4in; border: 1px solid #e5d9c8; border-radius: 8px; background: #f4edde; }
             .table-surface rect, .table-surface circle { fill: #fcf9f2; stroke: #b8a48c; stroke-width: 2; }
@@ -214,7 +216,9 @@ export async function exportVenuePDF(tables: TableItem[]) {
           </div>
 
           <section class="floor-plan">
-            <h2>Seating Plan</h2>
+            <div class="header">
+              <h2>Seating Plan</h2>
+            </div>
             <div class="floor-plan-note">Floor-plan view showing table layout, orientation, seats and assigned guests.</div>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="${planViewBox}" preserveAspectRatio="xMidYMid meet">
               ${floorPlanSvg}
