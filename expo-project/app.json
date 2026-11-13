@@ -4,7 +4,7 @@
   "icon": "./assets/icon.png",
   "splash": {
     "image": "./assets/splash.png",
-    "resizeMode": "contain",
+    "resizeMode": "cover",
     "backgroundColor": "#FBF7EF"
   },
   "ios": {
@@ -14,5 +14,10 @@
   },
   "plugins": [
     "expo-font"
-  ]
+  ],
+  "extra": {
+    "eas": {
+      "projectId": "c6452fb8-4c00-4dfd-9929-f1818bc8ea23"
+    }
+  }
 }
