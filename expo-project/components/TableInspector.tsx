@@ -58,58 +58,60 @@ export default function TableInspector({
         style={styles.modalOverlay}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <View style={styles.modalContent}>
-          <View style={styles.modalHeader}>
-            <View style={{ flex: 1, marginRight: 12 }}>
-              <Text style={styles.tableNameLabel}>TABLE NAME · TAP TO EDIT</Text>
-              <View style={styles.tableNameField}>
-                <TextInput
-                  value={table?.name ?? ''}
-                  onChangeText={name => onUpdateTable({ name })}
-                  placeholder="Enter table name"
-                  placeholderTextColor="#9a8d7c"
-                  style={styles.tableNameInput}
-                  accessibilityLabel="Edit table name"
-                  returnKeyType="done"
-                />
-                <Text style={styles.tableNameEditIcon}>✎</Text>
-              </View>
-              <Text style={styles.modalSubtitle}>
-                {table?.shape.toUpperCase()} · {table?.guests.length}/{table?.capacity} Seats
-              </Text>
-            </View>
-            <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-              <Text style={styles.closeBtnText}>Done</Text>
-            </TouchableOpacity>
-          </View>
-
-          {table ? (
-            <View style={styles.seatsBar}>
-              <Text style={styles.controlLabel}>Seats</Text>
-              <View style={styles.stepper}>
-                <TouchableOpacity
-                  onPress={() => onUpdateTable({ capacity: table.capacity - 1 })}
-                  disabled={table.capacity <= Math.max(1, table.guests.length)}
-                  style={styles.stepperButton}
-                >
-                  <Text style={styles.stepperButtonText}>−</Text>
-                </TouchableOpacity>
-                <Text style={styles.controlValue}>{table.capacity}</Text>
-                <TouchableOpacity
-                  onPress={() => onUpdateTable({ capacity: table.capacity + 1 })}
-                  style={styles.stepperButton}
-                >
-                  <Text style={styles.stepperButtonText}>+</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          ) : null}
-
+        <View style={styles.modalSheet}>
           <ScrollView
-            style={styles.guestListContainer}
+            style={styles.modalScroll}
+            contentContainerStyle={styles.modalScrollContent}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="interactive"
+            showsVerticalScrollIndicator={true}
           >
+            <View style={styles.modalHeader}>
+              <View style={{ flex: 1, marginRight: 12 }}>
+                <Text style={styles.tableNameLabel}>TABLE NAME · TAP TO EDIT</Text>
+                <View style={styles.tableNameField}>
+                  <TextInput
+                    value={table?.name ?? ''}
+                    onChangeText={name => onUpdateTable({ name })}
+                    placeholder="Enter table name"
+                    placeholderTextColor="#9a8d7c"
+                    style={styles.tableNameInput}
+                    accessibilityLabel="Edit table name"
+                    returnKeyType="done"
+                  />
+                  <Text style={styles.tableNameEditIcon}>✎</Text>
+                </View>
+                <Text style={styles.modalSubtitle}>
+                  {table?.shape.toUpperCase()} · {table?.guests.length}/{table?.capacity} Seats
+                </Text>
+              </View>
+              <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
+                <Text style={styles.closeBtnText}>Done</Text>
+              </TouchableOpacity>
+            </View>
+
+            {table ? (
+              <View style={styles.seatsBar}>
+                <Text style={styles.controlLabel}>Seats</Text>
+                <View style={styles.stepper}>
+                  <TouchableOpacity
+                    onPress={() => onUpdateTable({ capacity: table.capacity - 1 })}
+                    disabled={table.capacity <= Math.max(1, table.guests.length)}
+                    style={styles.stepperButton}
+                  >
+                    <Text style={styles.stepperButtonText}>−</Text>
+                  </TouchableOpacity>
+                  <Text style={styles.controlValue}>{table.capacity}</Text>
+                  <TouchableOpacity
+                    onPress={() => onUpdateTable({ capacity: table.capacity + 1 })}
+                    style={styles.stepperButton}
+                  >
+                    <Text style={styles.stepperButtonText}>+</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ) : null}
+
             <Text style={styles.sectionHeading}>Seated Guests</Text>
             {table?.guests.length === 0 ? (
               <Text style={styles.emptyText}>No people seated at this table yet.</Text>

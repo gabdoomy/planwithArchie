@@ -263,6 +263,20 @@ const styles = StyleSheet.create({
     padding: 20,
     maxHeight: '80%'
   },
+  modalSheet: {
+    backgroundColor: '#fbf7ef',
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    maxHeight: '85%',
+    overflow: 'hidden'
+  },
+  modalScroll: {
+    flexGrow: 0
+  },
+  modalScrollContent: {
+    padding: 20,
+    paddingBottom: 28
+  },
   settingsPage: {
     flex: 1,
     backgroundColor: '#fbf7ef',
