@@ -60,7 +60,7 @@ export default function TableInspector({
       >
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
-            <View>
+            <View style={{ flex: 1, marginRight: 12 }}>
               <Text style={styles.tableNameLabel}>TABLE NAME · TAP TO EDIT</Text>
               <View style={styles.tableNameField}>
                 <TextInput
@@ -82,6 +82,28 @@ export default function TableInspector({
               <Text style={styles.closeBtnText}>Done</Text>
             </TouchableOpacity>
           </View>
+
+          {table ? (
+            <View style={styles.seatsBar}>
+              <Text style={styles.controlLabel}>Seats</Text>
+              <View style={styles.stepper}>
+                <TouchableOpacity
+                  onPress={() => onUpdateTable({ capacity: table.capacity - 1 })}
+                  disabled={table.capacity <= Math.max(1, table.guests.length)}
+                  style={styles.stepperButton}
+                >
+                  <Text style={styles.stepperButtonText}>−</Text>
+                </TouchableOpacity>
+                <Text style={styles.controlValue}>{table.capacity}</Text>
+                <TouchableOpacity
+                  onPress={() => onUpdateTable({ capacity: table.capacity + 1 })}
+                  style={styles.stepperButton}
+                >
+                  <Text style={styles.stepperButtonText}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : null}
 
           <ScrollView
             style={styles.guestListContainer}
@@ -158,111 +180,6 @@ export default function TableInspector({
               <Text style={styles.deleteTableBtnText}>Delete This Table</Text>
             </TouchableOpacity>
           </ScrollView>
-
-          {table ? (
-            <View style={styles.tableControls}>
-              <View style={styles.controlRow}>
-                <Text style={styles.controlLabel}>Seats</Text>
-                <View style={styles.stepper}>
-                  <TouchableOpacity
-                    onPress={() => onUpdateTable({ capacity: table.capacity - 1 })}
-                    disabled={table.capacity <= Math.max(1, table.guests.length)}
-                    style={styles.stepperButton}
-                  >
-                    <Text style={styles.stepperButtonText}>−</Text>
-                  </TouchableOpacity>
-                  <Text style={styles.controlValue}>{table.capacity}</Text>
-                  <TouchableOpacity
-                    onPress={() => onUpdateTable({ capacity: table.capacity + 1 })}
-                    style={styles.stepperButton}
-                  >
-                    <Text style={styles.stepperButtonText}>+</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <View style={styles.controlRow}>
-                <Text style={styles.controlLabel}>Overall size</Text>
-                <View style={styles.stepper}>
-                  <TouchableOpacity
-                    onPress={() => onUpdateTable({ scale: Math.max(0.6, Number(((table.scale ?? 1) - 0.1).toFixed(1))) })}
-                    disabled={(table.scale ?? 1) <= 0.6}
-                    style={styles.stepperButton}
-                  >
-                    <Text style={styles.stepperButtonText}>−</Text>
-                  </TouchableOpacity>
-                  <Text style={styles.controlValue}>{Math.round((table.scale ?? 1) * 100)}%</Text>
-                  <TouchableOpacity
-                    onPress={() => onUpdateTable({ scale: Math.min(1.8, Number(((table.scale ?? 1) + 0.1).toFixed(1))) })}
-                    disabled={(table.scale ?? 1) >= 1.8}
-                    style={styles.stepperButton}
-                  >
-                    <Text style={styles.stepperButtonText}>+</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              {table.shape === 'rectangle' ? (
-                <>
-                  <View style={styles.controlRow}>
-                    <Text style={styles.controlLabel}>Length</Text>
-                    <View style={styles.stepper}>
-                      <TouchableOpacity
-                        onPress={() => onUpdateTable({
-                          lengthScale: Math.max(0.6, Math.round(((table.lengthScale ?? 1) - 0.1) * 10) / 10)
-                        })}
-                        disabled={(table.lengthScale ?? 1) <= 0.6}
-                        style={styles.stepperButton}
-                      >
-                        <Text style={styles.stepperButtonText}>−</Text>
-                      </TouchableOpacity>
-                      <Text style={styles.controlValue}>{Math.round((table.lengthScale ?? 1) * 100)}%</Text>
-                      <TouchableOpacity
-                        onPress={() => onUpdateTable({
-                          lengthScale: Math.min(2.5, Math.round(((table.lengthScale ?? 1) + 0.1) * 10) / 10)
-                        })}
-                        disabled={(table.lengthScale ?? 1) >= 2.5}
-                        style={styles.stepperButton}
-                      >
-                        <Text style={styles.stepperButtonText}>+</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                  <View style={styles.controlRow}>
-                    <Text style={styles.controlLabel}>Width</Text>
-                    <View style={styles.stepper}>
-                      <TouchableOpacity
-                        onPress={() => onUpdateTable({
-                          widthScale: Math.max(0.6, Math.round(((table.widthScale ?? 1) - 0.1) * 10) / 10)
-                        })}
-                        disabled={(table.widthScale ?? 1) <= 0.6}
-                        style={styles.stepperButton}
-                      >
-                        <Text style={styles.stepperButtonText}>−</Text>
-                      </TouchableOpacity>
-                      <Text style={styles.controlValue}>{Math.round((table.widthScale ?? 1) * 100)}%</Text>
-                      <TouchableOpacity
-                        onPress={() => onUpdateTable({
-                          widthScale: Math.min(2.5, Math.round(((table.widthScale ?? 1) + 0.1) * 10) / 10)
-                        })}
-                        disabled={(table.widthScale ?? 1) >= 2.5}
-                        style={styles.stepperButton}
-                      >
-                        <Text style={styles.stepperButtonText}>+</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </>
-              ) : null}
-              <View style={styles.controlRow}>
-                <Text style={styles.controlLabel}>Rotation</Text>
-                <TouchableOpacity
-                  onPress={() => onUpdateTable({ rotation: ((table.rotation ?? 0) + 90) % 360 })}
-                  style={styles.rotateButton}
-                >
-                  <Text style={styles.rotateButtonText}>↻ Rotate</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          ) : null}
         </View>
       </KeyboardAvoidingView>
     </Modal>

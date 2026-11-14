@@ -107,6 +107,7 @@ export default function App() {
       : event));
   };
 
+  const [tooltipTableId, setTooltipTableId] = useState<string | null>(null);
   const [selectedTable, setSelectedTable] = useState<TableItem | null>(null);
   const [selectedVenueItem, setSelectedVenueItem] = useState<TableItem | null>(null);
   const [newGuestName, setNewGuestName] = useState('');
@@ -185,6 +186,7 @@ export default function App() {
     };
     setEventPlans(previous => [...previous, newEvent]);
     setActiveEventId(newEvent.id);
+    setTooltipTableId(null);
     setSelectedTable(null);
     setSelectedVenueItem(null);
     resetGuestForm();
@@ -193,6 +195,7 @@ export default function App() {
   const switchEvent = (id: string) => {
     if (!eventPlans.some(event => event.id === id)) return;
     setActiveEventId(id);
+    setTooltipTableId(null);
     setSelectedTable(null);
     setSelectedVenueItem(null);
     resetGuestForm();
@@ -213,6 +216,7 @@ export default function App() {
           setEventPlans(remainingEvents);
           if (id === activeEventId) {
             setActiveEventId(remainingEvents[0].id);
+            setTooltipTableId(null);
             setSelectedTable(null);
             setSelectedVenueItem(null);
             resetGuestForm();
@@ -276,6 +280,7 @@ export default function App() {
             style: 'destructive',
             onPress: () => {
               setTables(importedTables);
+              setTooltipTableId(null);
               setSelectedTable(null);
               setSelectedVenueItem(null);
               resetGuestForm();
@@ -306,7 +311,9 @@ export default function App() {
     };
     setTables([...tables, newTable]);
     resetGuestForm();
-    setSelectedTable(newTable);
+    setSelectedTable(null);
+    setSelectedVenueItem(null);
+    setTooltipTableId(newTable.id);
   };
 
   const addVenueItem = (venueType: VenueItemType) => {
@@ -325,11 +332,19 @@ export default function App() {
       y: 80 + (index % 4) * 100,
       guests: []
     };
+    setTooltipTableId(null);
     setTables(prev => [...prev, newItem]);
   };
 
   const updateTablePosition = (id: string, x: number, y: number) => {
     setTables(prev => prev.map(t => (t.id === id ? { ...t, x, y } : t)));
+  };
+
+  const updateTableById = (id: string, updates: Partial<TableItem>) => {
+    setTables(prev => prev.map(t => (t.id === id ? { ...t, ...updates } : t)));
+    if (selectedTable?.id === id) {
+      setSelectedTable(prev => (prev ? { ...prev, ...updates } : null));
+    }
   };
 
   const updateSelectedTable = (updates: Partial<TableItem>) => {
@@ -416,6 +431,7 @@ export default function App() {
   const deleteTable = (id: string) => {
     setTables(prev => prev.filter(t => t.id !== id));
     resetGuestForm();
+    setTooltipTableId(prev => (prev === id ? null : prev));
     setSelectedTable(null);
   };
 
@@ -449,15 +465,24 @@ export default function App() {
       />
       <FloorPlanCanvas
         tables={tables}
+        selectedTableId={tooltipTableId}
         onDragEnd={updateTablePosition}
         onSelect={table => {
           if (table.venueType) {
+            setTooltipTableId(null);
             setSelectedVenueItem(table);
             return;
           }
+          setSelectedVenueItem(null);
+          setTooltipTableId(table.id);
+        }}
+        onDismissSelection={() => setTooltipTableId(null)}
+        onManageTable={table => {
           resetGuestForm();
+          setTooltipTableId(null);
           setSelectedTable(table);
         }}
+        onUpdateTable={updateTableById}
       />
       <AddItemsDock onAddTable={addTable} onAddVenueItem={addVenueItem} />
       <TableInspector

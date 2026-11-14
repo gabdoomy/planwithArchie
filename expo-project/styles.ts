@@ -110,6 +110,12 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 4
   },
+  tableNodeSelected: {
+    borderColor: '#766354',
+    borderWidth: 2.5,
+    shadowOpacity: 0.24,
+    shadowRadius: 10
+  },
   chairNode: {
     position: 'absolute',
     width: 24,
@@ -637,6 +643,151 @@ const styles = StyleSheet.create({
     color: '#a35f59',
     fontSize: 13,
     fontWeight: '600'
+  },
+  seatsBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingBottom: 12,
+    marginBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e9dfd0'
+  },
+  tableTooltip: {
+    position: 'absolute',
+    zIndex: 50,
+    minWidth: 256,
+    maxWidth: 344,
+    backgroundColor: '#fbf7ef',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#d8cbb8',
+    padding: 12,
+    shadowColor: '#51463c',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
+    elevation: 10
+  },
+  tooltipHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10
+  },
+  tooltipTitleWrap: {
+    flex: 1,
+    minWidth: 80
+  },
+  tooltipTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#51463c'
+  },
+  tooltipSubtitle: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#84796d',
+    marginTop: 1
+  },
+  tooltipHeaderActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6
+  },
+  tooltipManageBtn: {
+    backgroundColor: '#766354',
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+    borderRadius: 9
+  },
+  tooltipManageBtnText: {
+    color: '#fffaf2',
+    fontSize: 12,
+    fontWeight: '700'
+  },
+  tooltipCloseBtn: {
+    width: 26,
+    height: 26,
+    borderRadius: 8,
+    backgroundColor: '#efe5d6',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  tooltipCloseBtnText: {
+    color: '#51463c',
+    fontSize: 13,
+    fontWeight: '700'
+  },
+  tooltipControlsRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    gap: 10,
+    marginTop: 10,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#e9dfd0'
+  },
+  tooltipControlGroup: {
+    alignItems: 'center',
+    gap: 4
+  },
+  tooltipControlGroupRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10
+  },
+  tooltipControlLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+    color: '#84796d'
+  },
+  tooltipStepper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6
+  },
+  tooltipStepperBtn: {
+    width: 26,
+    height: 26,
+    borderRadius: 7,
+    backgroundColor: '#efe5d6',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  tooltipStepperBtnDisabled: {
+    opacity: 0.35
+  },
+  tooltipStepperBtnText: {
+    color: '#51463c',
+    fontSize: 16,
+    fontWeight: '700',
+    lineHeight: 18
+  },
+  tooltipValue: {
+    minWidth: 36,
+    textAlign: 'center',
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#51463c'
+  },
+  tooltipRotateBtn: {
+    height: 26,
+    paddingHorizontal: 10,
+    borderRadius: 7,
+    backgroundColor: '#efe5d6',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  tooltipRotateBtnText: {
+    color: '#51463c',
+    fontSize: 12,
+    fontWeight: '700'
   }
 });
 
