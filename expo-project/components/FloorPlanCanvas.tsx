@@ -244,7 +244,7 @@ export default function FloorPlanCanvas({
                   <Text style={styles.tooltipControlLabel}>Rotate</Text>
                   <TouchableOpacity
                     onPress={() => onUpdateTable(activeTable.id, {
-                      rotation: ((activeTable.rotation ?? 0) + 90) % 360
+                      rotation: ((activeTable.rotation ?? 0) + 45) % 360
                     })}
                     style={styles.tooltipRotateBtn}
                     activeOpacity={0.7}

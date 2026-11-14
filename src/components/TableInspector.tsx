@@ -332,7 +332,11 @@ export default function TableInspector({
               <span className="text-xs font-semibold text-[#51463c]">Orientation</span>
               <button
                 type="button"
-                onClick={() => onUpdateTable({ rotation: ((table.rotation ?? 0) + 90) % 360 })}
+                onClick={() =>
+                  onUpdateTable({
+                    rotation: ((table.rotation ?? 0) + (table.shape === 'rectangle' ? 45 : 90)) % 360
+                  })
+                }
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#51463c] bg-[#efe5d6] hover:bg-[#e4d7c6] rounded-xl transition-all cursor-pointer"
               >
                 <RotateCw className="w-3.5 h-3.5" />
