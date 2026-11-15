@@ -79,5 +79,5 @@ The latest version will always be made available at this URL, together with the 
 If you have any questions about this Privacy Policy, please contact us:
 
 **App:** PlanWithArchie  
-**Developer:** Alexandru Dumitrescu
+**Developer:** Alexandru Dumitrescu  
 **Email:** archie.von.hildebrand@gmail.com
