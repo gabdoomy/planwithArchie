@@ -20,6 +20,7 @@ interface FloorPlanCanvasProps {
   onDismissSelection: () => void;
   onManageTable: (table: TableItem) => void;
   onUpdateTable: (id: string, updates: Partial<TableItem>) => void;
+  onDeleteItem: (id: string) => void;
 }
 
 export default function FloorPlanCanvas({
@@ -29,7 +30,8 @@ export default function FloorPlanCanvas({
   onSelect,
   onDismissSelection,
   onManageTable,
-  onUpdateTable
+  onUpdateTable,
+  onDeleteItem
 }: FloorPlanCanvasProps) {
   const canvasPan = useRef(new Animated.ValueXY()).current;
   const canvasZoom = useRef(new Animated.Value(1)).current;
@@ -74,16 +76,17 @@ export default function FloorPlanCanvas({
   ).current;
 
   const activeTable = selectedTableId
-    ? tables.find(table => table.id === selectedTableId && !table.venueType) ?? null
+    ? tables.find(table => table.id === selectedTableId) ?? null
     : null;
 
   let tooltipPosition: { left: number; top: number } | null = null;
   if (activeTable && !isDraggingNode && canvasSize.width > 0 && canvasSize.height > 0) {
     const dims = getTableDimensions(activeTable);
     const rad = ((activeTable.rotation ?? 0) * Math.PI) / 180;
+    const nodeMargin = activeTable.venueType ? 6 : 28;
     const visualHalfH =
-      Math.abs(Math.sin(rad)) * (dims.width / 2 + 28) +
-      Math.abs(Math.cos(rad)) * (dims.height / 2 + 28);
+      Math.abs(Math.sin(rad)) * (dims.width / 2 + nodeMargin) +
+      Math.abs(Math.cos(rad)) * (dims.height / 2 + nodeMargin);
     const cx = activeTable.x + dims.width / 2;
     const cy = activeTable.y + dims.height / 2;
     const screenCx =
@@ -149,21 +152,33 @@ export default function FloorPlanCanvas({
             <View style={styles.tooltipTitleWrap}>
               <Text style={styles.tooltipTitle} numberOfLines={1}>{activeTable.name}</Text>
               <Text style={styles.tooltipSubtitle}>
-                {activeTable.guests.length}/{activeTable.capacity} guests
+                {activeTable.venueType
+                  ? 'Floor element'
+                  : `${activeTable.guests.length}/${activeTable.capacity} guests`}
               </Text>
             </View>
             <View style={styles.tooltipHeaderActions}>
-              <TouchableOpacity
-                onPress={() => onManageTable(activeTable)}
-                style={styles.tooltipManageBtn}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.tooltipManageBtnText}>Manage Table</Text>
-              </TouchableOpacity>
+              {activeTable.venueType ? (
+                <TouchableOpacity
+                  onPress={() => onDeleteItem(activeTable.id)}
+                  style={styles.tooltipDeleteBtn}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.tooltipDeleteBtnText}>Delete</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => onManageTable(activeTable)}
+                  style={styles.tooltipManageBtn}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.tooltipManageBtnText}>Manage Table</Text>
+                </TouchableOpacity>
+              )}
               <TouchableOpacity
                 onPress={onDismissSelection}
                 style={styles.tooltipCloseBtn}
-                accessibilityLabel="Close table actions"
+                accessibilityLabel={activeTable.venueType ? 'Close floor element actions' : 'Close table actions'}
                 activeOpacity={0.7}
               >
                 <Text style={styles.tooltipCloseBtnText}>✕</Text>
@@ -172,7 +187,75 @@ export default function FloorPlanCanvas({
           </View>
 
           <View style={styles.tooltipControlsRow}>
-            {activeTable.shape === 'rectangle' ? (
+            {activeTable.venueType ? (
+              <>
+                <View style={styles.tooltipControlGroup}>
+                  <Text style={styles.tooltipControlLabel}>Width</Text>
+                  <View style={styles.tooltipStepper}>
+                    <TouchableOpacity
+                      onPress={() => onUpdateTable(activeTable.id, {
+                        lengthScale: Math.max(0.5, Math.round(((activeTable.lengthScale ?? 1) - 0.1) * 10) / 10)
+                      })}
+                      disabled={(activeTable.lengthScale ?? 1) <= 0.5}
+                      style={[
+                        styles.tooltipStepperBtn,
+                        (activeTable.lengthScale ?? 1) <= 0.5 && styles.tooltipStepperBtnDisabled
+                      ]}
+                    >
+                      <Text style={styles.tooltipStepperBtnText}>−</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.tooltipValue}>
+                      {Math.round((activeTable.lengthScale ?? 1) * 100)}%
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => onUpdateTable(activeTable.id, {
+                        lengthScale: Math.min(3, Math.round(((activeTable.lengthScale ?? 1) + 0.1) * 10) / 10)
+                      })}
+                      disabled={(activeTable.lengthScale ?? 1) >= 3}
+                      style={[
+                        styles.tooltipStepperBtn,
+                        (activeTable.lengthScale ?? 1) >= 3 && styles.tooltipStepperBtnDisabled
+                      ]}
+                    >
+                      <Text style={styles.tooltipStepperBtnText}>+</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                <View style={styles.tooltipControlGroup}>
+                  <Text style={styles.tooltipControlLabel}>Height</Text>
+                  <View style={styles.tooltipStepper}>
+                    <TouchableOpacity
+                      onPress={() => onUpdateTable(activeTable.id, {
+                        widthScale: Math.max(0.5, Math.round(((activeTable.widthScale ?? 1) - 0.1) * 10) / 10)
+                      })}
+                      disabled={(activeTable.widthScale ?? 1) <= 0.5}
+                      style={[
+                        styles.tooltipStepperBtn,
+                        (activeTable.widthScale ?? 1) <= 0.5 && styles.tooltipStepperBtnDisabled
+                      ]}
+                    >
+                      <Text style={styles.tooltipStepperBtnText}>−</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.tooltipValue}>
+                      {Math.round((activeTable.widthScale ?? 1) * 100)}%
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => onUpdateTable(activeTable.id, {
+                        widthScale: Math.min(3, Math.round(((activeTable.widthScale ?? 1) + 0.1) * 10) / 10)
+                      })}
+                      disabled={(activeTable.widthScale ?? 1) >= 3}
+                      style={[
+                        styles.tooltipStepperBtn,
+                        (activeTable.widthScale ?? 1) >= 3 && styles.tooltipStepperBtnDisabled
+                      ]}
+                    >
+                      <Text style={styles.tooltipStepperBtnText}>+</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </>
+            ) : activeTable.shape === 'rectangle' ? (
               <>
                 <View style={styles.tooltipControlGroup}>
                   <Text style={styles.tooltipControlLabel}>Width</Text>
@@ -392,6 +475,7 @@ function DraggableTableNode({
         <View
           style={[
             styles.venueNode,
+            isSelected && styles.venueNodeSelected,
             {
               width: tableWidth,
               height: tableHeight,

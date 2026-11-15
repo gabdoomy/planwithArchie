@@ -239,6 +239,11 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 4
   },
+  venueNodeSelected: {
+    borderWidth: 2.5,
+    shadowOpacity: 0.24,
+    shadowRadius: 10
+  },
   venueNodeIcon: {
     fontSize: 18,
     fontWeight: '800',
@@ -717,6 +722,19 @@ const styles = StyleSheet.create({
   },
   tooltipManageBtnText: {
     color: '#fffaf2',
+    fontSize: 12,
+    fontWeight: '700'
+  },
+  tooltipDeleteBtn: {
+    backgroundColor: '#f5e6e3',
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+    borderRadius: 9,
+    borderWidth: 1,
+    borderColor: '#e4c7c2'
+  },
+  tooltipDeleteBtnText: {
+    color: '#a35f59',
     fontSize: 12,
     fontWeight: '700'
   },

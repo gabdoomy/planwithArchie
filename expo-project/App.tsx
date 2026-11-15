@@ -13,7 +13,6 @@ import EventSettings from './components/EventSettings';
 import type { EventSummary } from './components/EventSettings';
 import FloorPlanCanvas from './components/FloorPlanCanvas';
 import TableInspector from './components/TableInspector';
-import VenueItemEditor from './components/VenueItemEditor';
 import type { Guest, TableItem, TableShape, VenueItemType } from './types';
 import styles from './styles';
 import { exportVenuePDF } from './services/exportVenuePDF';
@@ -109,7 +108,6 @@ export default function App() {
 
   const [tooltipTableId, setTooltipTableId] = useState<string | null>(null);
   const [selectedTable, setSelectedTable] = useState<TableItem | null>(null);
-  const [selectedVenueItem, setSelectedVenueItem] = useState<TableItem | null>(null);
   const [newGuestName, setNewGuestName] = useState('');
   const [newGuestDiet, setNewGuestDiet] = useState('');
   const [newGuestIsVip, setNewGuestIsVip] = useState(false);
@@ -188,7 +186,6 @@ export default function App() {
     setActiveEventId(newEvent.id);
     setTooltipTableId(null);
     setSelectedTable(null);
-    setSelectedVenueItem(null);
     resetGuestForm();
   };
 
@@ -197,7 +194,6 @@ export default function App() {
     setActiveEventId(id);
     setTooltipTableId(null);
     setSelectedTable(null);
-    setSelectedVenueItem(null);
     resetGuestForm();
     setSettingsVisible(false);
   };
@@ -218,7 +214,6 @@ export default function App() {
             setActiveEventId(remainingEvents[0].id);
             setTooltipTableId(null);
             setSelectedTable(null);
-            setSelectedVenueItem(null);
             resetGuestForm();
           }
         }
@@ -282,7 +277,6 @@ export default function App() {
               setTables(importedTables);
               setTooltipTableId(null);
               setSelectedTable(null);
-              setSelectedVenueItem(null);
               resetGuestForm();
               Alert.alert('Import Complete', 'The current event seating plan has been replaced.');
             }
@@ -312,7 +306,6 @@ export default function App() {
     setTables([...tables, newTable]);
     resetGuestForm();
     setSelectedTable(null);
-    setSelectedVenueItem(null);
     setTooltipTableId(newTable.id);
   };
 
@@ -332,8 +325,10 @@ export default function App() {
       y: 80 + (index % 4) * 100,
       guests: []
     };
-    setTooltipTableId(null);
     setTables(prev => [...prev, newItem]);
+    resetGuestForm();
+    setSelectedTable(null);
+    setTooltipTableId(newItem.id);
   };
 
   const updateTablePosition = (id: string, x: number, y: number) => {
@@ -352,19 +347,6 @@ export default function App() {
     const updated = { ...selectedTable, ...updates };
     setTables(prev => prev.map(t => (t.id === updated.id ? updated : t)));
     setSelectedTable(updated);
-  };
-
-  const updateVenueItem = (updates: Partial<TableItem>) => {
-    if (!selectedVenueItem) return;
-    const updated = { ...selectedVenueItem, ...updates };
-    setTables(prev => prev.map(item => item.id === updated.id ? updated : item));
-    setSelectedVenueItem(updated);
-  };
-
-  const deleteVenueItem = () => {
-    if (!selectedVenueItem) return;
-    setTables(prev => prev.filter(item => item.id !== selectedVenueItem.id));
-    setSelectedVenueItem(null);
   };
 
   const addGuestToTable = () => {
@@ -467,15 +449,7 @@ export default function App() {
         tables={tables}
         selectedTableId={tooltipTableId}
         onDragEnd={updateTablePosition}
-        onSelect={table => {
-          if (table.venueType) {
-            setTooltipTableId(null);
-            setSelectedVenueItem(table);
-            return;
-          }
-          setSelectedVenueItem(null);
-          setTooltipTableId(table.id);
-        }}
+        onSelect={table => setTooltipTableId(table.id)}
         onDismissSelection={() => setTooltipTableId(null)}
         onManageTable={table => {
           resetGuestForm();
@@ -483,6 +457,7 @@ export default function App() {
           setSelectedTable(table);
         }}
         onUpdateTable={updateTableById}
+        onDeleteItem={deleteTable}
       />
       <AddItemsDock onAddTable={addTable} onAddVenueItem={addVenueItem} />
       <TableInspector
@@ -504,12 +479,6 @@ export default function App() {
         onSubmitGuest={addGuestToTable}
         onCancelEdit={resetGuestForm}
         onUpdateTable={updateSelectedTable}
-      />
-      <VenueItemEditor
-        item={selectedVenueItem}
-        onClose={() => setSelectedVenueItem(null)}
-        onUpdate={updateVenueItem}
-        onDelete={deleteVenueItem}
       />
     </SafeAreaView>
   );
