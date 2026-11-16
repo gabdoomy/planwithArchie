@@ -42,7 +42,7 @@ export function moveGuestBetweenSeats(
     fromIndex < 0 ||
     toIndex < 0 ||
     fromIndex >= table.capacity ||
-    toIndex >= table.capacity
+    toIndex > table.capacity
   ) {
     return table.guests;
   }

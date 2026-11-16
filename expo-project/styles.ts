@@ -276,7 +276,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden'
   },
   modalScroll: {
-    flexGrow: 0
+    flexGrow: 0,
+    flexShrink: 1
   },
   modalScrollContent: {
     padding: 20,
