@@ -3,6 +3,7 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system/legacy';
 import type { Guest, TableItem } from '../types';
+import { getSeatAssignments } from '../seatUtils';
 import { venueItemColors, venueItemDimensions, venueItemIcons, venueItemLabels } from '../venueItems';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -60,6 +61,7 @@ export async function exportVenuePDF(tables: TableItem[], eventName: string) {
             <text x="0" y="13" text-anchor="middle" font-size="8" fill="#817260">Venue area</text>
           </g>`;
         }
+        const seatAssignments = getSeatAssignments(table);
         const seats: { x: number; y: number; guest?: Guest; seatNum: number }[] = [];
         const chairSize = 24;
         if (table.shape === 'round') {
@@ -71,7 +73,7 @@ export async function exportVenuePDF(tables: TableItem[], eventName: string) {
               x: radius + Math.cos(angle) * chairDistance - chairSize / 2,
               y: radius + Math.sin(angle) * chairDistance - chairSize / 2,
               seatNum: i + 1,
-              guest: table.guests[i]
+              guest: seatAssignments[i] ?? undefined
             });
           }
         } else if (table.shape === 'rectangle') {
@@ -82,7 +84,7 @@ export async function exportVenuePDF(tables: TableItem[], eventName: string) {
               x: 20 + ((width - 40) * (i + 0.5)) / topSeats - chairSize / 2,
               y: -chairSize / 2 - 3,
               seatNum: i + 1,
-              guest: table.guests[i]
+              guest: seatAssignments[i] ?? undefined
             });
           }
           for (let i = 0; i < bottomSeats; i++) {
@@ -90,7 +92,7 @@ export async function exportVenuePDF(tables: TableItem[], eventName: string) {
               x: 20 + ((width - 40) * (i + 0.5)) / bottomSeats - chairSize / 2,
               y: height - chairSize / 2 + 3,
               seatNum: topSeats + i + 1,
-              guest: table.guests[topSeats + i]
+              guest: seatAssignments[topSeats + i] ?? undefined
             });
           }
         } else {
@@ -112,7 +114,7 @@ export async function exportVenuePDF(tables: TableItem[], eventName: string) {
               x = -chairSize - 3;
               y = height - (position - 2 * width - height) - chairSize / 2;
             }
-            seats.push({ x, y, seatNum: i + 1, guest: table.guests[i] });
+            seats.push({ x, y, seatNum: i + 1, guest: seatAssignments[i] ?? undefined });
           }
         }
 
@@ -203,7 +205,7 @@ export async function exportVenuePDF(tables: TableItem[], eventName: string) {
                   <span class="table-shape">${t.shape} · ${t.guests.length}/${t.capacity}</span>
                 </div>
                 ${t.guests.length === 0 ? '<div style="font-size: 12px; color: #9a8d7c; font-style: italic;">No guests seated yet</div>' : ''}
-                ${t.guests.map((g, sIdx) => `
+                ${getSeatAssignments(t).map((g, sIdx) => g ? `
                   <div class="guest-row">
                     <span>
                       <strong>Seat ${sIdx + 1}:</strong> ${escapeHtml(g.name)}
@@ -211,7 +213,7 @@ export async function exportVenuePDF(tables: TableItem[], eventName: string) {
                     </span>
                     ${g.dietary ? `<span class="diet-tag">${escapeHtml(g.dietary)}</span>` : ''}
                   </div>
-                `).join('')}
+                ` : '').join('')}
               </div>
             `).join('')}
           </div>

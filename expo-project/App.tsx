@@ -14,6 +14,12 @@ import type { EventSummary } from './components/EventSettings';
 import FloorPlanCanvas, { getTableDimensions } from './components/FloorPlanCanvas';
 import TableInspector from './components/TableInspector';
 import type { Guest, TableItem, TableShape, VenueItemType } from './types';
+import {
+  moveGuestBetweenSeats,
+  normalizeGuestsForCapacity,
+  removeGuestPreservingSeats,
+  seatGuestAtTable
+} from './seatUtils';
 import styles from './styles';
 import { exportVenuePDF } from './services/exportVenuePDF';
 import { venueItemLabels } from './venueItems';
@@ -359,12 +365,27 @@ export default function App() {
 
   const updateSelectedTable = (updates: Partial<TableItem>) => {
     if (!selectedTable) return;
-    const updated = { ...selectedTable, ...updates };
+    const updated: TableItem = {
+      ...selectedTable,
+      ...updates,
+      ...(updates.capacity !== undefined
+        ? { guests: normalizeGuestsForCapacity(selectedTable, updates.capacity) }
+        : {})
+    };
     setTables(prev => prev.map(t => (t.id === updated.id ? updated : t)));
     setSelectedTable(updated);
   };
 
-  const addGuestToTable = () => {
+  const moveGuestSeat = (fromSeatIndex: number, toSeatIndex: number) => {
+    if (!selectedTable) return;
+    const updatedGuests = moveGuestBetweenSeats(selectedTable, fromSeatIndex, toSeatIndex);
+    if (updatedGuests === selectedTable.guests) return;
+    const updated = { ...selectedTable, guests: updatedGuests };
+    setTables(prev => prev.map(t => (t.id === updated.id ? updated : t)));
+    setSelectedTable(updated);
+  };
+
+  const addGuestToTable = (preferredSeatIndex?: number | null) => {
     if (!selectedTable || !newGuestName.trim()) return;
     if (editingGuestId) {
       const updated = {
@@ -390,10 +411,11 @@ export default function App() {
       dietary: newGuestDiet.trim() || undefined,
       isVip: newGuestIsVip
     };
+    const seated = seatGuestAtTable(selectedTable, newGuest, preferredSeatIndex);
     const updated = {
       ...selectedTable,
-      guests: [...selectedTable.guests, newGuest],
-      capacity: Math.max(selectedTable.capacity, selectedTable.guests.length + 1)
+      guests: seated.guests,
+      capacity: seated.capacity
     };
     setTables(prev => prev.map(t => (t.id === selectedTable.id ? updated : t)));
     setSelectedTable(updated);
@@ -418,7 +440,7 @@ export default function App() {
     if (!selectedTable) return;
     const updated = {
       ...selectedTable,
-      guests: selectedTable.guests.filter(g => g.id !== guestId)
+      guests: removeGuestPreservingSeats(selectedTable, guestId)
     };
     setTables(prev => prev.map(t => (t.id === selectedTable.id ? updated : t)));
     setSelectedTable(updated);
@@ -488,6 +510,7 @@ export default function App() {
         onDeleteTable={() => selectedTable && deleteTable(selectedTable.id)}
         onRemoveGuest={removeGuestFromTable}
         onEditGuest={editGuest}
+        onMoveGuestSeat={moveGuestSeat}
         onGuestNameChange={setNewGuestName}
         onGuestDietChange={setNewGuestDiet}
         onToggleVip={() => setNewGuestIsVip(value => !value)}
@@ -551,8 +574,9 @@ function isTableItem(value: unknown): value is TableItem {
       && guest.id.length > 0
       && 'name' in guest
       && typeof guest.name === 'string'
-      && (!('dietary' in guest) || typeof guest.dietary === 'string')
-      && (!('isVip' in guest) || typeof guest.isVip === 'boolean')
+      && (!('dietary' in guest) || guest.dietary === undefined || typeof guest.dietary === 'string')
+      && (!('isVip' in guest) || guest.isVip === undefined || typeof guest.isVip === 'boolean')
+      && (!('seatIndex' in guest) || guest.seatIndex === undefined || (typeof guest.seatIndex === 'number' && Number.isInteger(guest.seatIndex) && guest.seatIndex >= 0))
     )
     && (table.venueType === undefined || validVenueTypes.includes(String(table.venueType)))
     && ['scale', 'lengthScale', 'widthScale', 'rotation'].every(key =>

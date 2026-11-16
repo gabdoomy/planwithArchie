@@ -6,6 +6,7 @@ export interface Guest {
   name: string;
   dietary?: string;
   isVip?: boolean;
+  seatIndex?: number;
 }
 
 export interface TableItem {

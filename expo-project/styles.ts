@@ -474,8 +474,7 @@ const styles = StyleSheet.create({
     color: '#51463c'
   },
   guestListContainer: {
-    marginBottom: 20,
-    flexShrink: 1
+    marginBottom: 8
   },
   sectionHeading: {
     fontSize: 12,
@@ -494,12 +493,59 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderRadius: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#e9dfd0'
+    borderBottomColor: '#e9dfd0',
+    backgroundColor: '#fbf7ef'
+  },
+  guestRowEmpty: {
+    backgroundColor: '#f7f1e5'
+  },
+  guestRowTargetSelected: {
+    backgroundColor: '#eee1c9',
+    borderColor: '#ad9166'
+  },
+  guestRowDropTarget: {
+    backgroundColor: '#eee1c9',
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+    borderColor: '#766354'
+  },
+  guestRowDragging: {
+    zIndex: 100,
+    backgroundColor: '#fcf9f2',
+    borderWidth: 1,
+    borderColor: '#cabb9f',
+    shadowColor: '#51463c',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8
+  },
+  dragHandle: {
+    paddingHorizontal: 8,
+    paddingVertical: 10,
+    marginLeft: 4,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  dragHandleGrid: {
+    flexDirection: 'row',
+    gap: 3
+  },
+  dragHandleColumn: {
+    gap: 3
+  },
+  dragHandleDot: {
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
+    backgroundColor: '#9a8d7c'
   },
   guestDetails: {
     flex: 1,
-    marginLeft: 10,
+    marginLeft: 6,
     paddingVertical: 2
   },
   seatNumBadge: {
@@ -510,15 +556,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
+  seatNumBadgeEmpty: {
+    backgroundColor: '#e9dfd0'
+  },
   seatNumText: {
     fontSize: 10,
     fontWeight: '700',
     color: '#84796d'
   },
+  seatNumTextEmpty: {
+    color: '#9a8d7c'
+  },
   guestNameText: {
     fontSize: 14,
     fontWeight: '600',
     color: '#51463c'
+  },
+  emptySeatText: {
+    fontSize: 13,
+    fontStyle: 'italic',
+    color: '#9a8d7c'
+  },
+  emptySeatActionText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#806c55',
+    paddingHorizontal: 8,
+    paddingVertical: 4
   },
   guestDietText: {
     fontSize: 11,

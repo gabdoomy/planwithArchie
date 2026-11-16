@@ -9,6 +9,7 @@ import {
   View
 } from 'react-native';
 import type { Guest, TableItem } from '../types';
+import { getSeatAssignments } from '../seatUtils';
 import { venueItemColors, venueItemDimensions, venueItemIcons } from '../venueItems';
 import styles from '../styles';
 
@@ -546,6 +547,7 @@ function DraggableTableNode({
     );
   }
 
+  const seatAssignments = getSeatAssignments(table);
   const chairs: { x: number; y: number; seatNum: number; guest?: Guest }[] = [];
   const chairSize = 24;
   if (table.shape === 'round') {
@@ -557,7 +559,7 @@ function DraggableTableNode({
         x: radius + Math.cos(angle) * chairDistance - chairSize / 2,
         y: radius + Math.sin(angle) * chairDistance - chairSize / 2,
         seatNum: i + 1,
-        guest: table.guests[i]
+        guest: seatAssignments[i] ?? undefined
       });
     }
   } else if (table.shape === 'rectangle') {
@@ -568,7 +570,7 @@ function DraggableTableNode({
         x: 20 + ((tableWidth - 40) * (i + 0.5)) / topSeats - chairSize / 2,
         y: -chairSize / 2 - 3,
         seatNum: i + 1,
-        guest: table.guests[i]
+        guest: seatAssignments[i] ?? undefined
       });
     }
     for (let i = 0; i < bottomSeats; i++) {
@@ -576,7 +578,7 @@ function DraggableTableNode({
         x: 20 + ((tableWidth - 40) * (i + 0.5)) / bottomSeats - chairSize / 2,
         y: tableHeight - chairSize / 2 + 3,
         seatNum: topSeats + i + 1,
-        guest: table.guests[topSeats + i]
+        guest: seatAssignments[topSeats + i] ?? undefined
       });
     }
   } else {
@@ -602,7 +604,7 @@ function DraggableTableNode({
         x: x - chairSize / 2,
         y: y - chairSize / 2,
         seatNum: i + 1,
-        guest: table.guests[i]
+        guest: seatAssignments[i] ?? undefined
       });
     }
   }
