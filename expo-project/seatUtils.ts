@@ -51,9 +51,8 @@ export function moveGuestBetweenSeats(
   const movingGuest = seats[fromIndex];
   if (!movingGuest) return table.guests;
 
-  const targetGuest = seats[toIndex];
-  seats[toIndex] = movingGuest;
-  seats[fromIndex] = targetGuest ?? null;
+  seats.splice(fromIndex, 1);
+  seats.splice(toIndex, 0, movingGuest);
 
   return serializeSeatAssignments(seats);
 }

@@ -77,6 +77,7 @@ export default function TableInspector({
   }, [seats.length, targetSeatIndex, table?.guests]);
 
   const handleDragStart = (index: number) => {
+    setTargetSeatIndex(null);
     setDraggingSeatIndex(index);
     setHoverSeatIndex(index);
     hoverSeatIndexRef.current = index;
@@ -86,23 +87,30 @@ export default function TableInspector({
     const origin = rowLayoutsRef.current[sourceIndex];
     if (!origin) return;
     const centerY = origin.y + origin.height / 2 + dy;
-
-    let nextHover = sourceIndex;
-    let closestDistance = Number.POSITIVE_INFINITY;
     const count = seatCountRef.current;
 
-    for (let i = 0; i < count; i++) {
-      const layout = rowLayoutsRef.current[i];
-      if (!layout) continue;
-      if (centerY >= layout.y && centerY <= layout.y + layout.height) {
-        nextHover = i;
-        break;
-      }
-      const rowCenter = layout.y + layout.height / 2;
-      const distance = Math.abs(centerY - rowCenter);
-      if (distance < closestDistance) {
-        closestDistance = distance;
-        nextHover = i;
+    let nextHover = sourceIndex;
+    const firstLayout = rowLayoutsRef.current[0];
+    const lastLayout = rowLayoutsRef.current[count - 1];
+    if (firstLayout && centerY < firstLayout.y) {
+      nextHover = 0;
+    } else if (lastLayout && centerY > lastLayout.y + lastLayout.height) {
+      nextHover = count - 1;
+    } else {
+      let closestDistance = Number.POSITIVE_INFINITY;
+      for (let i = 0; i < count; i++) {
+        const layout = rowLayoutsRef.current[i];
+        if (!layout) continue;
+        if (centerY >= layout.y && centerY <= layout.y + layout.height) {
+          nextHover = i;
+          break;
+        }
+        const rowCenter = layout.y + layout.height / 2;
+        const distance = Math.abs(centerY - rowCenter);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          nextHover = i;
+        }
       }
     }
 
@@ -126,6 +134,47 @@ export default function TableInspector({
     if (editingGuestId) onCancelEdit();
     setTargetSeatIndex(prev => (prev === index ? null : index));
     nameInputRef.current?.focus();
+  };
+
+  const getStepHeight = (seatIndex: number): number => {
+    const current = rowLayoutsRef.current[seatIndex];
+    if (!current) return 0;
+    const next = rowLayoutsRef.current[seatIndex + 1];
+    if (next) return next.y - current.y;
+    return current.height;
+  };
+
+  const getShiftOffset = (index: number): number => {
+    if (draggingSeatIndex === null || hoverSeatIndex === null || draggingSeatIndex === index) {
+      return 0;
+    }
+    const draggedStep = getStepHeight(draggingSeatIndex);
+    if (draggingSeatIndex < hoverSeatIndex) {
+      if (index > draggingSeatIndex && index <= hoverSeatIndex) {
+        return -draggedStep;
+      }
+    } else if (draggingSeatIndex > hoverSeatIndex) {
+      if (index >= hoverSeatIndex && index < draggingSeatIndex) {
+        return draggedStep;
+      }
+    }
+    return 0;
+  };
+
+  const getPreviewSeatNumber = (index: number): number => {
+    if (draggingSeatIndex === null || hoverSeatIndex === null) {
+      return index + 1;
+    }
+    if (index === draggingSeatIndex) {
+      return hoverSeatIndex + 1;
+    }
+    if (draggingSeatIndex < hoverSeatIndex && index > draggingSeatIndex && index <= hoverSeatIndex) {
+      return index;
+    }
+    if (draggingSeatIndex > hoverSeatIndex && index >= hoverSeatIndex && index < draggingSeatIndex) {
+      return index + 2;
+    }
+    return index + 1;
   };
 
   return (
@@ -200,13 +249,11 @@ export default function TableInspector({
                 <SeatRow
                   key={`seat_${index}`}
                   index={index}
+                  previewSeatNumber={getPreviewSeatNumber(index)}
                   guest={guest}
+                  isDragActive={draggingSeatIndex !== null}
                   isDragging={draggingSeatIndex === index}
-                  isDropTarget={
-                    draggingSeatIndex !== null &&
-                    draggingSeatIndex !== index &&
-                    hoverSeatIndex === index
-                  }
+                  shiftOffset={getShiftOffset(index)}
                   isSelectedEmptyTarget={guest === null && targetSeatIndex === index}
                   onLayout={(y, height) => {
                     rowLayoutsRef.current[index] = { y, height };
@@ -293,9 +340,11 @@ export default function TableInspector({
 
 function SeatRow({
   index,
+  previewSeatNumber,
   guest,
+  isDragActive,
   isDragging,
-  isDropTarget,
+  shiftOffset,
   isSelectedEmptyTarget,
   onLayout,
   onDragStart,
@@ -306,9 +355,11 @@ function SeatRow({
   onSelectEmptySeat
 }: {
   index: number;
+  previewSeatNumber: number;
   guest: Guest | null;
+  isDragActive: boolean;
   isDragging: boolean;
-  isDropTarget: boolean;
+  shiftOffset: number;
   isSelectedEmptyTarget: boolean;
   onLayout: (y: number, height: number) => void;
   onDragStart: () => void;
@@ -319,12 +370,26 @@ function SeatRow({
   onSelectEmptySeat: () => void;
 }) {
   const dragY = useRef(new Animated.Value(0)).current;
+  const shiftY = useRef(new Animated.Value(0)).current;
   const onDragStartRef = useRef(onDragStart);
   onDragStartRef.current = onDragStart;
   const onDragMoveRef = useRef(onDragMove);
   onDragMoveRef.current = onDragMove;
   const onDragEndRef = useRef(onDragEnd);
   onDragEndRef.current = onDragEnd;
+
+  useEffect(() => {
+    if (!isDragActive || isDragging) {
+      shiftY.setValue(0);
+      return;
+    }
+    Animated.spring(shiftY, {
+      toValue: shiftOffset,
+      useNativeDriver: true,
+      tension: 260,
+      friction: 24
+    }).start();
+  }, [isDragActive, isDragging, shiftOffset, shiftY]);
 
   const panResponder = useRef(
     PanResponder.create({
@@ -364,13 +429,12 @@ function SeatRow({
         styles.guestRow,
         isEmpty && styles.guestRowEmpty,
         isSelectedEmptyTarget && styles.guestRowTargetSelected,
-        isDropTarget && styles.guestRowDropTarget,
         isDragging && styles.guestRowDragging,
-        isDragging ? { transform: [{ translateY: dragY }] } : undefined
+        { transform: [{ translateY: isDragging ? dragY : shiftY }] }
       ]}
     >
       <View style={[styles.seatNumBadge, isEmpty && styles.seatNumBadgeEmpty]}>
-        <Text style={[styles.seatNumText, isEmpty && styles.seatNumTextEmpty]}>{index + 1}</Text>
+        <Text style={[styles.seatNumText, isEmpty && styles.seatNumTextEmpty]}>{previewSeatNumber}</Text>
       </View>
 
       {guest ? (
@@ -407,11 +471,9 @@ function SeatRow({
             activeOpacity={0.7}
           >
             <Text style={styles.emptySeatText}>
-              {isDropTarget
-                ? `Drop here for Seat ${index + 1}`
-                : isSelectedEmptyTarget
-                  ? `Adding guest to Seat ${index + 1}`
-                  : 'Empty seat'}
+              {isSelectedEmptyTarget
+                ? `Adding guest to Seat ${index + 1}`
+                : 'Empty seat'}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={onSelectEmptySeat} activeOpacity={0.7}>
