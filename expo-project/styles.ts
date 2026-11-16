@@ -802,10 +802,11 @@ const styles = StyleSheet.create({
     lineHeight: 18
   },
   tooltipValue: {
-    minWidth: 36,
+    minWidth: 40,
     textAlign: 'center',
     fontSize: 12,
     fontWeight: '700',
+    fontVariant: ['tabular-nums'],
     color: '#51463c'
   },
   tooltipRotateBtn: {

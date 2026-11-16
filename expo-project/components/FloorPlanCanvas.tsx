@@ -43,6 +43,26 @@ export default function FloorPlanCanvas({
   const [tooltipSize, setTooltipSize] = useState({ width: 296, height: 112 });
   const [viewport, setViewport] = useState({ panX: 0, panY: 0, zoom: 1 });
   const [isDraggingNode, setIsDraggingNode] = useState(false);
+  const tooltipAnchorRef = useRef<{
+    tableId: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    rotation: number;
+    venueType?: TableItem['venueType'];
+    tooltipWidth: number;
+    tooltipHeight: number;
+  } | null>(null);
+  const measuredTooltipForIdRef = useRef<string | null>(null);
+
+  const handleNodeDragStateChange = (dragging: boolean) => {
+    if (dragging) {
+      tooltipAnchorRef.current = null;
+      measuredTooltipForIdRef.current = null;
+    }
+    setIsDraggingNode(dragging);
+  };
 
   const canvasResponder = useRef(
     PanResponder.create({
@@ -79,29 +99,48 @@ export default function FloorPlanCanvas({
     ? tables.find(table => table.id === selectedTableId) ?? null
     : null;
 
-  let tooltipPosition: { left: number; top: number } | null = null;
-  if (activeTable && !isDraggingNode && canvasSize.width > 0 && canvasSize.height > 0) {
+  if (!activeTable) {
+    tooltipAnchorRef.current = null;
+    measuredTooltipForIdRef.current = null;
+  } else if (!isDraggingNode && (!tooltipAnchorRef.current || tooltipAnchorRef.current.tableId !== activeTable.id)) {
     const dims = getTableDimensions(activeTable);
-    const rad = ((activeTable.rotation ?? 0) * Math.PI) / 180;
-    const nodeMargin = activeTable.venueType ? 6 : 28;
+    tooltipAnchorRef.current = {
+      tableId: activeTable.id,
+      x: activeTable.x,
+      y: activeTable.y,
+      width: dims.width,
+      height: dims.height,
+      rotation: activeTable.rotation ?? 0,
+      venueType: activeTable.venueType,
+      tooltipWidth: tooltipSize.width,
+      tooltipHeight: tooltipSize.height
+    };
+    measuredTooltipForIdRef.current = null;
+  }
+
+  let tooltipPosition: { left: number; top: number } | null = null;
+  const anchor = tooltipAnchorRef.current;
+  if (activeTable && anchor && !isDraggingNode && canvasSize.width > 0 && canvasSize.height > 0) {
+    const rad = (anchor.rotation * Math.PI) / 180;
+    const nodeMargin = anchor.venueType ? 6 : 28;
     const visualHalfH =
-      Math.abs(Math.sin(rad)) * (dims.width / 2 + nodeMargin) +
-      Math.abs(Math.cos(rad)) * (dims.height / 2 + nodeMargin);
-    const cx = activeTable.x + dims.width / 2;
-    const cy = activeTable.y + dims.height / 2;
+      Math.abs(Math.sin(rad)) * (anchor.width / 2 + nodeMargin) +
+      Math.abs(Math.cos(rad)) * (anchor.height / 2 + nodeMargin);
+    const cx = anchor.x + anchor.width / 2;
+    const cy = anchor.y + anchor.height / 2;
     const screenCx =
       canvasSize.width / 2 + viewport.panX + (cx - canvasSize.width / 2) * viewport.zoom;
     const screenCy =
       canvasSize.height / 2 + viewport.panY + (cy - canvasSize.height / 2) * viewport.zoom;
     const scaledHalfH = visualHalfH * viewport.zoom;
 
-    const preferredTop = screenCy - scaledHalfH - tooltipSize.height - 10;
+    const preferredTop = screenCy - scaledHalfH - anchor.tooltipHeight - 10;
     const fallbackBottom = screenCy + scaledHalfH + 10;
     const rawTop = preferredTop >= 12 ? preferredTop : fallbackBottom;
 
     tooltipPosition = {
-      left: clamp(screenCx - tooltipSize.width / 2, 12, Math.max(12, canvasSize.width - tooltipSize.width - 12)),
-      top: clamp(rawTop, 12, Math.max(12, canvasSize.height - tooltipSize.height - 12))
+      left: clamp(screenCx - anchor.tooltipWidth / 2, 12, Math.max(12, canvasSize.width - anchor.tooltipWidth - 12)),
+      top: clamp(rawTop, 12, Math.max(12, canvasSize.height - anchor.tooltipHeight - 12))
     };
   }
 
@@ -128,7 +167,7 @@ export default function FloorPlanCanvas({
             table={table}
             isSelected={table.id === selectedTableId}
             zoomRef={zoomRef}
-            onDragStateChange={setIsDraggingNode}
+            onDragStateChange={handleNodeDragStateChange}
             onDragEnd={(x, y) => onDragEnd(table.id, x, y)}
             onPress={() => onSelect(table)}
           />
@@ -139,8 +178,23 @@ export default function FloorPlanCanvas({
         <View
           onLayout={event => {
             const { width, height } = event.nativeEvent.layout;
-            if (Math.abs(width - tooltipSize.width) > 1 || Math.abs(height - tooltipSize.height) > 1) {
-              setTooltipSize({ width, height });
+            if (
+              tooltipAnchorRef.current &&
+              tooltipAnchorRef.current.tableId === activeTable.id &&
+              measuredTooltipForIdRef.current !== activeTable.id
+            ) {
+              measuredTooltipForIdRef.current = activeTable.id;
+              if (
+                Math.abs(width - tooltipAnchorRef.current.tooltipWidth) > 1 ||
+                Math.abs(height - tooltipAnchorRef.current.tooltipHeight) > 1
+              ) {
+                tooltipAnchorRef.current = {
+                  ...tooltipAnchorRef.current,
+                  tooltipWidth: width,
+                  tooltipHeight: height
+                };
+                setTooltipSize({ width, height });
+              }
             }
           }}
           style={[
@@ -436,11 +490,11 @@ function DraggableTableNode({
         const finalX = currentPos.current.x + gesture.dx / zoomRef.current;
         const finalY = currentPos.current.y + gesture.dy / zoomRef.current;
         currentPos.current = { x: finalX, y: finalY };
+        onDragEndRef.current(finalX, finalY);
         if (isDraggingRef.current) {
           isDraggingRef.current = false;
           onDragStateChangeRef.current(false);
         }
-        onDragEndRef.current(finalX, finalY);
 
         if (Math.abs(gesture.dx) < 5 && Math.abs(gesture.dy) < 5) {
           onPressRef.current();
@@ -612,7 +666,7 @@ function DraggableTableNode({
   );
 }
 
-function getTableDimensions(table: TableItem) {
+export function getTableDimensions(table: TableItem) {
   const scale = table.scale ?? 1;
   if (table.venueType) {
     return {

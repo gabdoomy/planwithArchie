@@ -11,7 +11,7 @@ import AddItemsDock from './components/AddItemsDock';
 import AppHeader from './components/AppHeader';
 import EventSettings from './components/EventSettings';
 import type { EventSummary } from './components/EventSettings';
-import FloorPlanCanvas from './components/FloorPlanCanvas';
+import FloorPlanCanvas, { getTableDimensions } from './components/FloorPlanCanvas';
 import TableInspector from './components/TableInspector';
 import type { Guest, TableItem, TableShape, VenueItemType } from './types';
 import styles from './styles';
@@ -335,10 +335,25 @@ export default function App() {
     setTables(prev => prev.map(t => (t.id === id ? { ...t, x, y } : t)));
   };
 
+  const applyTableUpdate = (table: TableItem, updates: Partial<TableItem>): TableItem => {
+    const next: TableItem = { ...table, ...updates };
+    if (
+      updates.x === undefined &&
+      updates.y === undefined &&
+      (updates.scale !== undefined || updates.lengthScale !== undefined || updates.widthScale !== undefined)
+    ) {
+      const prevDims = getTableDimensions(table);
+      const nextDims = getTableDimensions(next);
+      next.x = table.x + (prevDims.width - nextDims.width) / 2;
+      next.y = table.y + (prevDims.height - nextDims.height) / 2;
+    }
+    return next;
+  };
+
   const updateTableById = (id: string, updates: Partial<TableItem>) => {
-    setTables(prev => prev.map(t => (t.id === id ? { ...t, ...updates } : t)));
+    setTables(prev => prev.map(t => (t.id === id ? applyTableUpdate(t, updates) : t)));
     if (selectedTable?.id === id) {
-      setSelectedTable(prev => (prev ? { ...prev, ...updates } : null));
+      setSelectedTable(prev => (prev ? applyTableUpdate(prev, updates) : null));
     }
   };
 
