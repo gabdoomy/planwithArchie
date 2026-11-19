@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "../../../exposure-triangle"
+		},
+		{
+			"path": "../../../GiggleSnap"
 		}
 	],
 	"settings": {}
